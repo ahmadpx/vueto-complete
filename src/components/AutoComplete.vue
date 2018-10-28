@@ -13,10 +13,12 @@
         class="autoComplete__input"
         @keyup.down="highlightDown"
         @keyup.up="highlightUp"
+        @keyup.enter="handleSelect()"
+        @focus="handleFocus"
     />
     
     <ul
-        v-if="results.length"
+        v-if="showResults && results.length"
         :data-test-id="`${testKey}AutoCompleteResultsList`"
         :style="allStyles.resultsList"
         class="autoComplete__list"
@@ -30,6 +32,7 @@
           :class="{
             'autoComplete__item--highlighted': isHighlighted(index)
           }"
+          @click="handleSelect(index)"
       >
         <slot :item="item">
           <!-- Fallback content -->
@@ -44,10 +47,8 @@
 /**
  * TODO:
  * 1. highlight keywords from search results that match the query
- * 3. add index for the whole component for test keys
  * 4. tests
  * 5. documentation [props, events, styling]
- * 6. @select event
  * 7. debounce fetching
  * 8. base styling
  * 9. add wrapper for the input to add an icon and to be optional
@@ -70,6 +71,12 @@ export default {
     autoCompleteFetchHandler: {
       type: Function,
       required: true
+    },
+    sortHandler: {
+      type: Function
+    },
+    filterHandler: {
+      type: Function
     },
     minCharsToFetch: {
       type: Number,
@@ -104,7 +111,8 @@ export default {
   data: () => ({
     query: "",
     results: [],
-    highlightedItem: 0
+    highlightedItem: 0,
+    showResults: false
   }),
   computed: {
     /**
@@ -128,8 +136,11 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchResults() {
+      this.showResults = true;
+
       if (this.emptyResultsOnEmptyQuery && this.query === "") {
         this.results = [];
+        this.showResults = false;
         return;
       }
 
@@ -137,15 +148,48 @@ export default {
 
       try {
         this.$emit("startedFetching");
-        const results = await this.autoCompleteFetchHandler(this.query);
-        this.results = this.maxResultsToDisplay
+
+        let results = await this.autoCompleteFetchHandler(this.query);
+        results = this.maxResultsToDisplay
           ? results.slice(0, this.maxResultsToDisplay)
           : results;
-        this.$emit("fetchSuccess", this.results);
+        results = this.sortHandler ? this.sortHandler(results) : results;
+        results = this.filterHandler ? this.filterHandler(results) : results;
+        this.results = results;
+
+        this.$emit("fetchSuccess", results);
       } catch (e) {
         this.$emit("fetchError", e);
       }
       this.$emit("finishedFetching");
+    },
+
+    /**
+     * get highlighted item
+     */
+    getHighlightedItem() {
+      if (!this.results.length) return;
+      return this.results[this.highlightedItem];
+    },
+
+    /**
+     * handle item select
+     */
+    handleSelect(index) {
+      if (index) {
+        this.highlightedItem = index;
+      }
+      const selectedItem = this.getHighlightedItem();
+      this.query = selectedItem.name;
+      this.$emit("select", this.getHighlightedItem());
+      this.showResults = false;
+    },
+
+    /**
+     * handle focus
+     */
+    handleFocus() {
+      this.showResults = true;
     },
 
     /**

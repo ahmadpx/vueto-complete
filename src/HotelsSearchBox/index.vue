@@ -9,6 +9,7 @@
         @fetchSuccess="handleFetchSuccess"
         @fetchError="handleFetchError"
         :styles="styles"
+        @select="handleSelect"
     >
       <template slot-scope="{ item }">
         hotel: {{ item.name }}
@@ -48,6 +49,14 @@ export default {
           ...locations.map(location => ({ name: location.name }))
         ]
       );
+    },
+
+    /**
+     * handle select
+     * @param {Object} selectedItem
+     */
+    handleSelect(selectedItem) {
+      console.log(selectedItem);
     },
 
     /**
