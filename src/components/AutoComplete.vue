@@ -7,14 +7,16 @@
     <label
         :for="`${testKey}AutoCompleteInput`"
         :style="getInputWrapperStyles()"
+        :data-test-id="`${testKey}AutoCompleteInputWrapper`"
         class="autoComplete__inputWrapper"
         :class="{
-            'autoComplete__inputWrapper--focused': isInputFocused
-          }"
+          'autoComplete__inputWrapper--focused': isInputFocused
+        }"
     >
       <slot
           name="input-icon"
           :style="getInputIconStyles()"
+          :data-test-id="`${testKey}AutoCompleteInputIcon`"
           class="autoComplete__inputIcon"
           :class="{
             'autoComplete__inputIcon--focused': isInputFocused
@@ -28,15 +30,15 @@
           :placeholder="placeholder"
           :data-test-id="`${testKey}AutoCompleteInput`"
           :style="getInputStyles()"
-          class="autoComplete__input"
-          :class="{
-            'autoComplete__input--focused': isInputFocused
-          }"
           @keyup.down="highlightDown"
           @keyup.up="highlightUp"
           @keyup.enter="handleSelect()"
           @focus="handleFocus"
           @blur="toggleFocus(false)"
+          class="autoComplete__input"
+          :class="{
+            'autoComplete__input--focused': isInputFocused
+          }"
       />
     </label>
     
@@ -51,12 +53,12 @@
           :data-test-id="`${testKey}AutoCompleteResultItem_${index}`"
           :key="item.name"
           :style="getItemStyles(index)"
+          @click="handleSelect(index)"
+          @mouseenter="highlightItem(index)"
           class="autoComplete__item"
           :class="{
             'autoComplete__item--highlighted': isHighlighted(index)
           }"
-          @click="handleSelect(index)"
-          @mouseenter="highlightItem(index)"
       >
         <slot :item="item">
           <!-- Fallback content -->
@@ -71,19 +73,50 @@
 /**
  * TODO:
  * 1. highlight keywords from search results that match the query
- * 4. tests
- * 5. documentation [props, events, styling]
- * 7. debounce fetching
- * 8. base styling
+ * 3. debounce fetching
+ * 4. base styling
+ * 5. add different label from the wrapper for actual optional label
+ * 2. tests
+ * 6. fire more events
  */
 
 /**
  * AutoComplete
  *
+ * =PROPS=
  * @prop {Function} autoCompleteFetchHandler
+ * @prop {Function} sortHandler
+ * @prop {Function} filterHandler
  * @prop {Number} minCharsToFetch
+ * @prop {Number} maxResultsToDisplay
+ * @prop {String} placeholder
+ * @prop {String} testKey
  * @prop {Boolean} emptyResultsOnEmptyQuery
- * @prop {String} testKey [for automation testing]
+ * @prop {Boolean} highlightResults
+ * @prop {Object} styles
+ *
+ * =SLOTS=
+ * @slot slot-scope = item [to control how to render autoComplete results]
+ * @slot name = input-icon [to control how to render input icon]
+ *
+ * =EVENTS=
+ * @event startedFetching [fired before fetch start]
+ * @event fetchSuccess [fired on fetch success]
+ * @event fetchError [fired on fetch error]
+ * @event finishedFetching [fired after fetch resolve/reject]
+ * @event select [fired on selecting autoComplete item]
+ *
+ * =STYLES=
+ * @styleProp {Object} container
+ * @styleProp {Object} input
+ * @styleProp {Object} inputIcon
+ * @styleProp {Object} inputWrapper
+ * @styleProp {Object} focusedInput
+ * @styleProp {Object} focusedInputIcon
+ * @styleProp {Object} focusedInputWrapper
+ * @styleProp {Object} resultsList
+ * @styleProp {Object} resultItem
+ * @styleProp {Object} highlightedItem
  */
 export default {
   name: 'AutoComplete',
@@ -139,16 +172,16 @@ export default {
      */
     allStyles() {
       return {
-        container: this.styles.container ? this.styles.container : {},
-        input: this.styles.input ? this.styles.input : {},
-        inputIcon: this.styles.inputIcon ? this.styles.inputIcon : {},
-        inputWrapper: this.styles.inputWrapper ? this.styles.inputWrapper : {},
-        focusedInput: this.styles.focusedInput ? this.styles.focusedInput : {},
-        focusedInputIcon: this.styles.focusedInputIcon ? this.styles.focusedInputIcon : {},
-        focusedInputWrapper: this.styles.focusedInputWrapper ? this.styles.focusedInputWrapper : {},
-        resultsList: this.styles.resultsList ? this.styles.resultsList : {},
-        resultItem: this.styles.resultItem ? this.styles.resultItem : {},
-        highlightedItem: this.styles.highlightedItem ? this.styles.highlightedItem : {},
+        container: this.styles.container || {},
+        input: this.styles.input || {},
+        inputIcon: this.styles.inputIcon || {},
+        inputWrapper: this.styles.inputWrapper || {},
+        focusedInput: this.styles.focusedInput || {},
+        focusedInputIcon: this.styles.focusedInputIcon || {},
+        focusedInputWrapper: this.styles.focusedInputWrapper || {},
+        resultsList: this.styles.resultsList || {},
+        resultItem: this.styles.resultItem || {},
+        highlightedItem: this.styles.highlightedItem || {},
       };
     },
   },
