@@ -6,9 +6,20 @@
   >
     <label
         :for="`${testKey}AutoCompleteInput`"
-        :style="allStyles.inputWrapper"
+        :style="getInputWrapperStyles()"
+        class="autoComplete__inputWrapper"
+        :class="{
+            'autoComplete__inputWrapper--focused': isInputFocused
+          }"
     >
-      <slot name="input-icon"></slot>
+      <slot
+          name="input-icon"
+          :style="getInputIconStyles()"
+          class="autoComplete__inputIcon"
+          :class="{
+            'autoComplete__inputIcon--focused': isInputFocused
+          }"
+      ></slot>
       <input
           :id="`${testKey}AutoCompleteInput`"
           type="text"
@@ -16,12 +27,16 @@
           @input="fetchResults"
           :placeholder="placeholder"
           :data-test-id="`${testKey}AutoCompleteInput`"
-          :style="allStyles.input"
+          :style="getInputStyles()"
           class="autoComplete__input"
+          :class="{
+            'autoComplete__input--focused': isInputFocused
+          }"
           @keyup.down="highlightDown"
           @keyup.up="highlightUp"
           @keyup.enter="handleSelect()"
           @focus="handleFocus"
+          @blur="toggleFocus(false)"
       />
     </label>
     
@@ -108,14 +123,7 @@ export default {
     },
     styles: {
       type: Object,
-      default: () => ({
-        container: {},
-        input: {},
-        inputWrapper: {},
-        resultsList: {},
-        resultItem: {},
-        highlightedItem: {},
-      }),
+      default: () => ({}),
     },
   },
   data: () => ({
@@ -123,6 +131,7 @@ export default {
     results: [],
     highlightedItem: 0,
     showResults: false,
+    isInputFocused: false,
   }),
   computed: {
     /**
@@ -132,7 +141,11 @@ export default {
       return {
         container: this.styles.container ? this.styles.container : {},
         input: this.styles.input ? this.styles.input : {},
+        inputIcon: this.styles.inputIcon ? this.styles.inputIcon : {},
         inputWrapper: this.styles.inputWrapper ? this.styles.inputWrapper : {},
+        focusedInput: this.styles.focusedInput ? this.styles.focusedInput : {},
+        focusedInputIcon: this.styles.focusedInputIcon ? this.styles.focusedInputIcon : {},
+        focusedInputWrapper: this.styles.focusedInputWrapper ? this.styles.focusedInputWrapper : {},
         resultsList: this.styles.resultsList ? this.styles.resultsList : {},
         resultItem: this.styles.resultItem ? this.styles.resultItem : {},
         highlightedItem: this.styles.highlightedItem ? this.styles.highlightedItem : {},
@@ -197,6 +210,7 @@ export default {
      */
     handleFocus() {
       this.showResults = true;
+      this.toggleFocus(true);
     },
 
     /**
@@ -243,12 +257,55 @@ export default {
         ...(this.isHighlighted(index) ? this.allStyles.highlightedItem : {}),
       };
     },
+
+    /**
+     * toggle focus
+     * @param {Boolean} focusState
+     */
+    toggleFocus(focusState) {
+      this.isInputFocused = focusState;
+    },
+
+    /**
+     * get input styles [normal and focused]
+     */
+    getInputStyles() {
+      return {
+        ...this.allStyles.input,
+        ...(this.isInputFocused ? this.allStyles.focusedInput : {}),
+      };
+    },
+
+    /**
+     * get input styles [normal and focused]
+     */
+    getInputWrapperStyles() {
+      return {
+        ...this.allStyles.inputWrapper,
+        ...(this.isInputFocused ? this.allStyles.focusedInputWrapper : {}),
+      };
+    },
+
+    /**
+     * get input styles [normal and focused]
+     */
+    getInputIconStyles() {
+      return {
+        ...this.allStyles.inputIcon,
+        ...(this.isInputFocused ? this.allStyles.focusedInputIcon : {}),
+      };
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .autoComplete {
+  &__input {
+    &--focused {
+      background: yellow;
+    }
+  }
   &__item {
     &--highlighted {
       color: blue;
