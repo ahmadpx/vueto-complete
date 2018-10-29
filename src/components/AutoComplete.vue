@@ -4,18 +4,26 @@
       :data-test-id="`${testKey}AutoCompleteContainer`"
       :style="allStyles.container"
   >
-    <input
-        type="text"
-        v-model="query"
-        @input="fetchResults"
-        :data-test-id="`${testKey}AutoCompleteInput`"
-        :style="allStyles.input"
-        class="autoComplete__input"
-        @keyup.down="highlightDown"
-        @keyup.up="highlightUp"
-        @keyup.enter="handleSelect()"
-        @focus="handleFocus"
-    />
+    <label
+        :for="`${testKey}AutoCompleteInput`"
+        :style="allStyles.inputWrapper"
+    >
+      <slot name="input-icon"></slot>
+      <input
+          :id="`${testKey}AutoCompleteInput`"
+          type="text"
+          v-model="query"
+          @input="fetchResults"
+          :placeholder="placeholder"
+          :data-test-id="`${testKey}AutoCompleteInput`"
+          :style="allStyles.input"
+          class="autoComplete__input"
+          @keyup.down="highlightDown"
+          @keyup.up="highlightUp"
+          @keyup.enter="handleSelect()"
+          @focus="handleFocus"
+      />
+    </label>
     
     <ul
         v-if="showResults && results.length"
@@ -52,7 +60,6 @@
  * 5. documentation [props, events, styling]
  * 7. debounce fetching
  * 8. base styling
- * 9. add wrapper for the input to add an icon and to be optional + add label for the input
  */
 
 /**
@@ -83,6 +90,10 @@ export default {
     maxResultsToDisplay: {
       type: Number,
     },
+    placeholder: {
+      type: String,
+      default: '',
+    },
     emptyResultsOnEmptyQuery: {
       type: Boolean,
       default: true,
@@ -100,6 +111,7 @@ export default {
       default: () => ({
         container: {},
         input: {},
+        inputWrapper: {},
         resultsList: {},
         resultItem: {},
         highlightedItem: {},
@@ -120,6 +132,7 @@ export default {
       return {
         container: this.styles.container ? this.styles.container : {},
         input: this.styles.input ? this.styles.input : {},
+        inputWrapper: this.styles.inputWrapper ? this.styles.inputWrapper : {},
         resultsList: this.styles.resultsList ? this.styles.resultsList : {},
         resultItem: this.styles.resultItem ? this.styles.resultItem : {},
         highlightedItem: this.styles.highlightedItem ? this.styles.highlightedItem : {},
