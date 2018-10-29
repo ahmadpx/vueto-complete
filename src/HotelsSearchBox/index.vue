@@ -12,9 +12,6 @@
         @select="handleSelect"
         :filter-handler="filterResults"
     >
-      <template slot-scope="{ item }">
-        hotel: {{ item.name }}
-      </template>
     </AutoComplete>
   </div>
 </template>

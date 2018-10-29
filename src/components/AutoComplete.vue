@@ -34,7 +34,7 @@
           @keyup.up="highlightUp"
           @keyup.enter="handleSelect()"
           @focus="handleFocus"
-          @blur="toggleFocus(false)"
+          @blur="handleBlur"
           class="autoComplete__input"
           :class="{
             'autoComplete__input--focused': isInputFocused
@@ -77,7 +77,6 @@
  * 4. base styling
  * 5. add different label from the wrapper for actual optional label
  * 2. tests
- * 6. fire more events
  */
 
 /**
@@ -105,6 +104,8 @@
  * @event fetchError [fired on fetch error]
  * @event finishedFetching [fired after fetch resolve/reject]
  * @event select [fired on selecting autoComplete item]
+ * @event inputFocus [fired on focusing the input]
+ * @event inputBlur [fired on bluring the input]
  *
  * =STYLES=
  * @styleProp {Object} container
@@ -243,7 +244,17 @@ export default {
      */
     handleFocus() {
       this.showResults = true;
-      this.toggleFocus(true);
+      this.isInputFocused = true;
+      this.$emit('inputFocus');
+    },
+
+    /**
+     * handle blur
+     */
+    handleBlur() {
+      this.showResults = true;
+      this.isInputFocused = false;
+      this.$emit('inputBlur');
     },
 
     /**
