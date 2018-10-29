@@ -33,6 +33,7 @@
             'autoComplete__item--highlighted': isHighlighted(index)
           }"
           @click="handleSelect(index)"
+          @mouseenter="highlightItem(index)"
       >
         <slot :item="item">
           <!-- Fallback content -->
@@ -190,6 +191,14 @@ export default {
      */
     handleFocus() {
       this.showResults = true;
+    },
+
+    /**
+     * highlight item
+     * @param {Number} index
+     */
+    highlightItem(index) {
+      this.highlightedItem = index;
     },
 
     /**
