@@ -3,13 +3,14 @@
     <AutoComplete
         test-key="hotels"
         :auto-complete-fetch-handler="searchDestinations"
-        :max-results-to-display="MAX_AUTO_COMPLETE_RESULTS"
+        :max-results-to-display="5"
         :min-chars-to-fetch="MIN_CHARS_TO_FETCH_RESULTS"
         @beforeFetch="handleBeforeFetch"
         @fetchSuccess="handleFetchSuccess"
         @fetchError="handleFetchError"
         :styles="styles"
         @select="handleSelect"
+        :filter-handler="filterResults"
     >
       <template slot-scope="{ item }">
         hotel: {{ item.name }}
@@ -19,21 +20,21 @@
 </template>
 
 <script>
-import { SearchClient } from "web-js-sdk/packages/hotel-sdk/lib/clients/search.client.js";
-import AutoComplete from "../components/AutoComplete";
-import constants from "./constants";
+import { SearchClient } from 'web-js-sdk/packages/hotel-sdk/lib/clients/search.client.js';
+import AutoComplete from '../components/AutoComplete';
+import constants from './constants';
 
 const styles = {
   highlightedItem: {
-    color: "green"
-  }
+    color: 'green',
+  },
 };
 
 export default {
-  name: "HotelsSearchBox",
+  name: 'HotelsSearchBox',
   data: () => ({
     ...constants,
-    styles
+    styles,
   }),
   methods: {
     /**
@@ -43,12 +44,10 @@ export default {
      * @returns {Promise}
      */
     searchDestinations(query) {
-      return SearchClient.getHotelsAndDestinations(query).then(
-        ({ hotels, locations }) => [
-          ...hotels.map(hotel => ({ name: hotel.name })),
-          ...locations.map(location => ({ name: location.name }))
-        ]
-      );
+      return SearchClient.getHotelsAndDestinations(query).then(({ hotels, locations }) => [
+        ...hotels.map(hotel => ({ name: hotel.name })),
+        ...locations.map(location => ({ name: location.name })),
+      ]);
     },
 
     /**
@@ -59,11 +58,15 @@ export default {
       console.log(selectedItem);
     },
 
+    filterResults(results) {
+      return results.filter(item => item.name !== 'Metro Hotel In Bukit Bintang, Kuala Lumpur, MY');
+    },
+
     /**
      * handle before fetch
      */
     handleBeforeFetch() {
-      console.log("before fetch");
+      console.log('before fetch');
     },
 
     /**
@@ -80,17 +83,17 @@ export default {
      */
     handleFetchError(error) {
       console.log(error);
-    }
+    },
   },
   components: {
-    AutoComplete
-  }
+    AutoComplete,
+  },
 };
 </script>
 
 <style scoped>
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

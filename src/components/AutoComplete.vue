@@ -52,10 +52,7 @@
  * 5. documentation [props, events, styling]
  * 7. debounce fetching
  * 8. base styling
- * 9. add wrapper for the input to add an icon and to be optional
- * 10. add label for the input
- * 11. sorting results
- * 12 filtering results
+ * 9. add wrapper for the input to add an icon and to be optional + add label for the input
  */
 
 /**
@@ -67,36 +64,36 @@
  * @prop {String} testKey [for automation testing]
  */
 export default {
-  name: "AutoComplete",
+  name: 'AutoComplete',
   props: {
     autoCompleteFetchHandler: {
       type: Function,
-      required: true
+      required: true,
     },
     sortHandler: {
-      type: Function
+      type: Function,
     },
     filterHandler: {
-      type: Function
+      type: Function,
     },
     minCharsToFetch: {
       type: Number,
-      default: 2
+      default: 2,
     },
     maxResultsToDisplay: {
-      type: Number
+      type: Number,
     },
     emptyResultsOnEmptyQuery: {
       type: Boolean,
-      default: true
+      default: true,
     },
     testKey: {
       type: String,
-      default: ""
+      default: '',
     },
     highlightResults: {
       type: Boolean,
-      default: true
+      default: true,
     },
     styles: {
       type: Object,
@@ -105,15 +102,15 @@ export default {
         input: {},
         resultsList: {},
         resultItem: {},
-        highlightedItem: {}
-      })
-    }
+        highlightedItem: {},
+      }),
+    },
   },
   data: () => ({
-    query: "",
+    query: '',
     results: [],
     highlightedItem: 0,
-    showResults: false
+    showResults: false,
   }),
   computed: {
     /**
@@ -125,11 +122,9 @@ export default {
         input: this.styles.input ? this.styles.input : {},
         resultsList: this.styles.resultsList ? this.styles.resultsList : {},
         resultItem: this.styles.resultItem ? this.styles.resultItem : {},
-        highlightedItem: this.styles.highlightedItem
-          ? this.styles.highlightedItem
-          : {}
+        highlightedItem: this.styles.highlightedItem ? this.styles.highlightedItem : {},
       };
-    }
+    },
   },
   methods: {
     /**
@@ -139,7 +134,7 @@ export default {
     async fetchResults() {
       this.showResults = true;
 
-      if (this.emptyResultsOnEmptyQuery && this.query === "") {
+      if (this.emptyResultsOnEmptyQuery && this.query === '') {
         this.results = [];
         this.showResults = false;
         return;
@@ -148,21 +143,19 @@ export default {
       if (this.query.length < this.minCharsToFetch) return;
 
       try {
-        this.$emit("startedFetching");
+        this.$emit('startedFetching');
 
         let results = await this.autoCompleteFetchHandler(this.query);
-        results = this.maxResultsToDisplay
-          ? results.slice(0, this.maxResultsToDisplay)
-          : results;
-        results = this.sortHandler ? this.sortHandler(results) : results;
         results = this.filterHandler ? this.filterHandler(results) : results;
+        results = this.sortHandler ? this.sortHandler(results) : results;
+        results = this.maxResultsToDisplay ? results.slice(0, this.maxResultsToDisplay) : results;
         this.results = results;
 
-        this.$emit("fetchSuccess", results);
+        this.$emit('fetchSuccess', results);
       } catch (e) {
-        this.$emit("fetchError", e);
+        this.$emit('fetchError', e);
       }
-      this.$emit("finishedFetching");
+      this.$emit('finishedFetching');
     },
 
     /**
@@ -182,7 +175,7 @@ export default {
       }
       const selectedItem = this.getHighlightedItem();
       this.query = selectedItem.name;
-      this.$emit("select", this.getHighlightedItem());
+      this.$emit('select', this.getHighlightedItem());
       this.showResults = false;
     },
 
@@ -215,8 +208,7 @@ export default {
      */
     highlightDown() {
       const nextHighlightedItem = this.highlightedItem + 1;
-      this.highlightedItem =
-        this.results.length > nextHighlightedItem ? nextHighlightedItem : 0;
+      this.highlightedItem = this.results.length > nextHighlightedItem ? nextHighlightedItem : 0;
     },
 
     /**
@@ -224,10 +216,7 @@ export default {
      */
     highlightUp() {
       const nextHighlightedItem = this.highlightedItem - 1;
-      this.highlightedItem =
-        nextHighlightedItem === -1
-          ? this.results.length - 1
-          : nextHighlightedItem;
+      this.highlightedItem = nextHighlightedItem === -1 ? this.results.length - 1 : nextHighlightedItem;
     },
 
     /**
@@ -238,10 +227,10 @@ export default {
     getItemStyles(index) {
       return {
         ...this.allStyles.resultItem,
-        ...(this.isHighlighted(index) ? this.allStyles.highlightedItem : {})
+        ...(this.isHighlighted(index) ? this.allStyles.highlightedItem : {}),
       };
-    }
-  }
+    },
+  },
 };
 </script>
 
