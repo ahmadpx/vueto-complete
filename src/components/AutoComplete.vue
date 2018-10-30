@@ -70,10 +70,11 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
+
 /**
  * TODO:
  * 1. highlight keywords from search results that match the query
- * 3. debounce fetching
  * 4. base styling
  * 5. add different label from the wrapper for actual optional label
  * 2. tests
@@ -136,6 +137,10 @@ export default {
       type: Number,
       default: 2,
     },
+    debounceTime: {
+      type: Number,
+      default: 300,
+    },
     maxResultsToDisplay: {
       type: Number,
     },
@@ -167,6 +172,10 @@ export default {
     showResults: false,
     isInputFocused: false,
   }),
+
+  /**
+   * computed
+   */
   computed: {
     /**
      * compute all styles and fallback to empty object as default
@@ -186,6 +195,10 @@ export default {
       };
     },
   },
+
+  /**
+   * methods
+   */
   methods: {
     /**
      * fetch results
@@ -303,14 +316,6 @@ export default {
     },
 
     /**
-     * toggle focus
-     * @param {Boolean} focusState
-     */
-    toggleFocus(focusState) {
-      this.isInputFocused = focusState;
-    },
-
-    /**
      * get input styles [normal and focused]
      */
     getInputStyles() {
@@ -339,6 +344,13 @@ export default {
         ...(this.isInputFocused ? this.allStyles.focusedInputIcon : {}),
       };
     },
+  },
+
+  /**
+   * mounted
+   */
+  mounted() {
+    this.fetchResults = debounce(this.fetchResults, this.debounceTime);
   },
 };
 </script>
