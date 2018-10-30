@@ -30,7 +30,7 @@
           :id="`${testKey}AutoCompleteInput`"
           type="text"
           v-model="query"
-          @input="fetchResults"
+          @input="autoComplete"
           :placeholder="placeholder"
           :data-test-id="`${testKey}AutoCompleteInput`"
           :style="getInputStyles()"
@@ -84,10 +84,10 @@
 
 <script>
 import debounce from 'lodash/debounce';
+import constants from './constants';
 
 /**
  * TODO:
- * 3. provide options for the autocomplete list to be [fetchHandler, array list, url]
  * 4. base styling
  * 2. tests
  */
@@ -97,9 +97,10 @@ import debounce from 'lodash/debounce';
  *
  * =PROPS=
  * @prop {Function} fetchHandler
+ * @prop {Array} autoCompleteList
  * @prop {Function} sortHandler
  * @prop {Function} filterHandler
- * @prop {Number} minCharsToFetch
+ * @prop {Number} minCharsToAutoComplete
  * @prop {Number} maxResultsToDisplay
  * @prop {Number} debounceTime
  * @prop {Boolean} highlightMatched
@@ -143,42 +144,46 @@ export default {
     fetchHandler: {
       type: Function,
     },
+    autoCompleteList: {
+      type: Array,
+      default: () => [],
+    },
     sortHandler: {
       type: Function,
     },
     filterHandler: {
       type: Function,
     },
-    minCharsToFetch: {
+    minCharsToAutoComplete: {
       type: Number,
-      default: 2,
+      default: constants.MIN_CHARS_TO_AUTOCOMPLETE_RESULTS,
     },
     debounceTime: {
       type: Number,
-      default: 300,
+      default: constants.DEBOUNCE_TIME,
     },
     highlightMatched: {
       type: Boolean,
-      default: true,
+      default: constants.HIGHLIGHT_MATCHED_WORDS,
     },
     maxResultsToDisplay: {
       type: Number,
     },
     placeholder: {
       type: String,
-      default: '',
+      default: constants.DEFAULT_PLACEHOLDER,
     },
     emptyResultsOnEmptyQuery: {
       type: Boolean,
-      default: true,
+      default: constants.EMPTY_RESULTS_ON_EMPTY_QUERY,
     },
     testKey: {
       type: String,
-      default: '',
+      default: constants.DEFAULT_TEST_KEY,
     },
     highlightResults: {
       type: Boolean,
-      default: true,
+      default: constants.HIGHLIGHT_RESULTS,
     },
     styles: {
       type: Object,
@@ -226,7 +231,7 @@ export default {
      * fetch results
      * @returns {Promise<void>}
      */
-    async fetchResults() {
+    async autoComplete() {
       this.showResults = true;
 
       if (this.emptyResultsOnEmptyQuery && this.query === '') {
@@ -236,12 +241,12 @@ export default {
 
       this.results = this.highlightMatched ? this.results.map(this.markMatchedWords) : this.results;
 
-      if (this.query.length < this.minCharsToFetch) return;
+      if (this.query.length < this.minCharsToAutoComplete) return;
 
       try {
         this.$emit('startedFetching');
 
-        let results = await this.fetchHandler(this.query);
+        let results = this.autoCompleteList.length ? this.autoCompleteList : await this.fetchHandler(this.query);
         results = this.filterHandler ? this.filterHandler(results) : results;
         results = this.sortHandler ? this.sortHandler(results) : results;
         results = this.maxResultsToDisplay ? results.slice(0, this.maxResultsToDisplay) : results;
@@ -404,7 +409,8 @@ export default {
    * mounted
    */
   mounted() {
-    this.fetchResults = debounce(this.fetchResults, this.debounceTime);
+    const debounceTime = this.autoCompleteList.length ? 0 : this.debounceTime;
+    this.autoComplete = debounce(this.autoComplete, debounceTime);
   },
 };
 </script>
