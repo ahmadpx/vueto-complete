@@ -66,7 +66,16 @@
       >
         <slot :item="item">
           <!-- Fallback content -->
-          {{ item.name }}
+          <p v-if="highlightMatched && item.words && item.words.length">
+            <span v-for="(word, wordIndex) in item.words" :key="word + wordIndex">
+              <span
+                  v-if="wordIndex > 0"
+                  class="autoComplete__itemMatched"
+                  :style="getMatchedWordsStyles(index)"
+              >{{ item.matchedWord }}</span><span>{{ word }}</span>
+            </span>
+          </p>
+          <p v-else>{{ item.name }}</p>
         </slot>
       </li>
     </ul>
@@ -78,21 +87,22 @@ import debounce from 'lodash/debounce';
 
 /**
  * TODO:
- * 1. highlight keywords from search results that match the query
+ * 3. provide options for the autocomplete list to be [fetchHandler, array list, url]
  * 4. base styling
  * 2. tests
- * 3. provide options for the autocomplete list to be [fetchHandler, array list, url]
  */
 
 /**
  * AutoComplete
  *
  * =PROPS=
- * @prop {Function} autoCompleteFetchHandler
+ * @prop {Function} fetchHandler
  * @prop {Function} sortHandler
  * @prop {Function} filterHandler
  * @prop {Number} minCharsToFetch
  * @prop {Number} maxResultsToDisplay
+ * @prop {Number} debounceTime
+ * @prop {Boolean} highlightMatched
  * @prop {String} placeholder
  * @prop {String} testKey
  * @prop {Boolean} emptyResultsOnEmptyQuery
@@ -116,21 +126,22 @@ import debounce from 'lodash/debounce';
  * =STYLES=
  * @styleProp {Object} container
  * @styleProp {Object} input
- * @styleProp {Object} inputLabel
- * @styleProp {Object} inputWrapper
  * @styleProp {Object} focusedInput
- * @styleProp {Object} focusedInputLabel
+ * @styleProp {Object} inputWrapper
  * @styleProp {Object} focusedInputWrapper
+ * @styleProp {Object} inputLabel
+ * @styleProp {Object} focusedInputLabel
  * @styleProp {Object} resultsList
  * @styleProp {Object} resultItem
  * @styleProp {Object} highlightedItem
+ * @styleProp {Object} matchedWords
+ * @styleProp {Object} highlightedMatchedWords
  */
 export default {
   name: 'AutoComplete',
   props: {
-    autoCompleteFetchHandler: {
+    fetchHandler: {
       type: Function,
-      required: true,
     },
     sortHandler: {
       type: Function,
@@ -145,6 +156,10 @@ export default {
     debounceTime: {
       type: Number,
       default: 300,
+    },
+    highlightMatched: {
+      type: Boolean,
+      default: true,
     },
     maxResultsToDisplay: {
       type: Number,
@@ -189,14 +204,16 @@ export default {
       return {
         container: this.styles.container || {},
         input: this.styles.input || {},
-        inputWrapper: this.styles.inputWrapper || {},
-        inputLabel: this.styles.inputLabel || {},
         focusedInput: this.styles.focusedInput || {},
+        inputWrapper: this.styles.inputWrapper || {},
         focusedInputWrapper: this.styles.focusedInputWrapper || {},
+        inputLabel: this.styles.inputLabel || {},
         focusedInputLabel: this.styles.focusedInputLabel || {},
         resultsList: this.styles.resultsList || {},
         resultItem: this.styles.resultItem || {},
         highlightedItem: this.styles.highlightedItem || {},
+        matchedWords: this.styles.matchedWords || {},
+        highlightedMatchedWords: this.styles.highlightedMatchedWords || {},
       };
     },
   },
@@ -213,20 +230,22 @@ export default {
       this.showResults = true;
 
       if (this.emptyResultsOnEmptyQuery && this.query === '') {
-        this.results = [];
         this.showResults = false;
         return;
       }
+
+      this.results = this.highlightMatched ? this.results.map(this.markMatchedWords) : this.results;
 
       if (this.query.length < this.minCharsToFetch) return;
 
       try {
         this.$emit('startedFetching');
 
-        let results = await this.autoCompleteFetchHandler(this.query);
+        let results = await this.fetchHandler(this.query);
         results = this.filterHandler ? this.filterHandler(results) : results;
         results = this.sortHandler ? this.sortHandler(results) : results;
         results = this.maxResultsToDisplay ? results.slice(0, this.maxResultsToDisplay) : results;
+        results = this.highlightMatched ? results.map(this.markMatchedWords) : results;
         this.results = results;
 
         this.$emit('fetchSuccess', results);
@@ -234,6 +253,24 @@ export default {
         this.$emit('fetchError', e);
       }
       this.$emit('finishedFetching');
+    },
+
+    /**
+     * mark matched words
+     * @param {Object} item
+     * @returns {{...item, words}} item
+     */
+    markMatchedWords(item) {
+      const { name } = item;
+      const matchedIndex = name.toLowerCase().indexOf(this.query.toLowerCase());
+      const matchedWord = matchedIndex < 0 ? '' : name.slice(matchedIndex, matchedIndex + this.query.length);
+      const words = name.split(new RegExp(this.query, 'i'));
+
+      return {
+        ...item,
+        matchedWord,
+        words,
+      };
     },
 
     /**
@@ -321,6 +358,18 @@ export default {
     },
 
     /**
+     * get matched words styles [normal, highlighted]
+     * @param {Number} index highlighted
+     * @returns {Object} styles
+     */
+    getMatchedWordsStyles(index) {
+      return {
+        ...this.allStyles.matchedWords,
+        ...(this.isHighlighted(index) ? this.allStyles.highlightedMatchedWords : {}),
+      };
+    },
+
+    /**
      * get input styles [normal and focused]
      */
     getInputStyles() {
@@ -371,6 +420,9 @@ export default {
     &--highlighted {
       color: blue;
     }
+  }
+  &__itemMatched {
+    color: blue;
   }
 }
 </style>
