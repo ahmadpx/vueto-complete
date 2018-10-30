@@ -88,6 +88,10 @@ import constants from './constants';
 
 /**
  * TODO:
+ * 1. no results message
+ * 1. add anchor to be instead of the <name> and make it optional
+ * 1. add a slot for the item icon and make the scope is the item also
+ * 1. multiple selection
  * 4. base styling
  * 2. tests
  */
@@ -247,6 +251,7 @@ export default {
         this.$emit('startedFetching');
 
         let results = this.autoCompleteList.length ? this.autoCompleteList : await this.fetchHandler(this.query);
+        results = results.map(this.formatResultItemStructure);
         results = this.filterHandler ? this.filterHandler(results) : results;
         results = this.sortHandler ? this.sortHandler(results) : results;
         results = this.maxResultsToDisplay ? results.slice(0, this.maxResultsToDisplay) : results;
@@ -258,6 +263,20 @@ export default {
         this.$emit('fetchError', e);
       }
       this.$emit('finishedFetching');
+    },
+
+    /**
+     * @prop {string|object} item
+     * @return {Object} item
+     */
+    formatResultItemStructure(item) {
+      if (typeof item === 'string') {
+        return {
+          name: item,
+        };
+      }
+
+      return item;
     },
 
     /**
