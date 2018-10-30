@@ -4,8 +4,7 @@
       :data-test-id="`${testKey}AutoCompleteContainer`"
       :style="allStyles.container"
   >
-    <label
-        :for="`${testKey}AutoCompleteInput`"
+    <div
         :style="getInputWrapperStyles()"
         :data-test-id="`${testKey}AutoCompleteInputWrapper`"
         class="autoComplete__inputWrapper"
@@ -13,15 +12,20 @@
           'autoComplete__inputWrapper--focused': isInputFocused
         }"
     >
-      <slot
-          name="input-icon"
-          :style="getInputIconStyles()"
-          :data-test-id="`${testKey}AutoCompleteInputIcon`"
-          class="autoComplete__inputIcon"
+      <label
+          :for="`${testKey}AutoCompleteInput`"
+          :style="getInputLabelStyles()"
+          :data-test-id="`${testKey}AutoCompleteInputLabel`"
+          class="autoComplete__inputLabel"
           :class="{
-            'autoComplete__inputIcon--focused': isInputFocused
+            'autoComplete__inputLabel--focused': isInputFocused
           }"
-      ></slot>
+      >
+        <slot name="input-label"></slot>
+      </label>
+      
+      <slot name="input-icon"></slot>
+      
       <input
           :id="`${testKey}AutoCompleteInput`"
           type="text"
@@ -40,7 +44,7 @@
             'autoComplete__input--focused': isInputFocused
           }"
       />
-    </label>
+    </div>
     
     <ul
         v-if="showResults && results.length"
@@ -76,8 +80,8 @@ import debounce from 'lodash/debounce';
  * TODO:
  * 1. highlight keywords from search results that match the query
  * 4. base styling
- * 5. add different label from the wrapper for actual optional label
  * 2. tests
+ * 3. provide options for the autocomplete list to be [fetchHandler, array list, url]
  */
 
 /**
@@ -98,6 +102,7 @@ import debounce from 'lodash/debounce';
  * =SLOTS=
  * @slot slot-scope = item [to control how to render autoComplete results]
  * @slot name = input-icon [to control how to render input icon]
+ * @slot name = input-label [to control how to render input label]
  *
  * =EVENTS=
  * @event startedFetching [fired before fetch start]
@@ -111,10 +116,10 @@ import debounce from 'lodash/debounce';
  * =STYLES=
  * @styleProp {Object} container
  * @styleProp {Object} input
- * @styleProp {Object} inputIcon
+ * @styleProp {Object} inputLabel
  * @styleProp {Object} inputWrapper
  * @styleProp {Object} focusedInput
- * @styleProp {Object} focusedInputIcon
+ * @styleProp {Object} focusedInputLabel
  * @styleProp {Object} focusedInputWrapper
  * @styleProp {Object} resultsList
  * @styleProp {Object} resultItem
@@ -184,11 +189,11 @@ export default {
       return {
         container: this.styles.container || {},
         input: this.styles.input || {},
-        inputIcon: this.styles.inputIcon || {},
         inputWrapper: this.styles.inputWrapper || {},
+        inputLabel: this.styles.inputLabel || {},
         focusedInput: this.styles.focusedInput || {},
-        focusedInputIcon: this.styles.focusedInputIcon || {},
         focusedInputWrapper: this.styles.focusedInputWrapper || {},
+        focusedInputLabel: this.styles.focusedInputLabel || {},
         resultsList: this.styles.resultsList || {},
         resultItem: this.styles.resultItem || {},
         highlightedItem: this.styles.highlightedItem || {},
@@ -338,10 +343,10 @@ export default {
     /**
      * get input styles [normal and focused]
      */
-    getInputIconStyles() {
+    getInputLabelStyles() {
       return {
-        ...this.allStyles.inputIcon,
-        ...(this.isInputFocused ? this.allStyles.focusedInputIcon : {}),
+        ...this.allStyles.inputLabel,
+        ...(this.isInputFocused ? this.allStyles.focusedInputLabel : {}),
       };
     },
   },
