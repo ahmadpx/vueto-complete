@@ -64,9 +64,11 @@
             'autoComplete__item--highlighted': isHighlighted(index)
           }"
       >
-        <slot :item="item">
+        <slot name="item" :item="item">
           <!-- Fallback content -->
           <p v-if="highlightMatched && item.words && item.words.length">
+            <slot name="item-icon" :item="item"></slot>
+            
             <span v-for="(word, wordIndex) in item.words" :key="word + wordIndex">
               <span
                   v-if="wordIndex > 0"
@@ -74,15 +76,19 @@
                   :style="getMatchedWordsStyles(index)"
               >{{ item.matchedWord }}</span><span>{{ word }}</span>
             </span>
+  
+            <slot name="item-caption" :item="item"></slot>
           </p>
           <p v-else>{{ item[searchKey] }}</p>
         </slot>
       </li>
     </ul>
     
-    <div v-if="showNoResultsMessage && noResults">
-      {{ noResultsMessage }}
-    </div>
+    <slot name="no-results">
+      <div v-if="showNoResultsMessage && noResults">
+        {{ noResultsMessage }}
+      </div>
+    </slot>
   </div>
 </template>
 
@@ -92,10 +98,8 @@ import constants from './constants';
 
 /**
  * TODO:
- * 1. add a slot for the item icon and make the scope is the item also
- * 1. multiple selection
- * 4. base styling
- * 2. tests
+ * 2. base styling
+ * 3. tests
  */
 
 /**
@@ -120,9 +124,12 @@ import constants from './constants';
  * @prop {Object} styles
  *
  * =SLOTS=
- * @slot slot-scope = item [to control how to render autoComplete results]
- * @slot name = input-icon [to control how to render input icon]
- * @slot name = input-label [to control how to render input label]
+ * @slot [name = input-icon] to control how to render input icon
+ * @slot [name = input-label] to control how to render input label
+ * @slot [name = item, slot-scope = item] to control how to render autoComplete results
+ * @slot [name = item-icon, slot-scope = item] to control how to render item icon
+ * @slot [name = item-label, slot-scope = item] to control how to render item label
+ * @slot [name = no-results] to control how to render no results message
  *
  * =EVENTS=
  * @event startedFetching [fired before fetch start]
@@ -132,6 +139,8 @@ import constants from './constants';
  * @event select [fired on selecting autoComplete item]
  * @event inputFocus [fired on focusing the input]
  * @event inputBlur [fired on bluring the input]
+ * @event highlightItem [fired on bluring the input]
+ * @event noResultsFound [fired on bluring the input]
  *
  * =STYLES=
  * @styleProp {Object} container
@@ -270,8 +279,7 @@ export default {
         this.$emit('startedFetching');
 
         let results = this.autoCompleteList.length ? this.autoCompleteList : await this.fetchHandler(this.query);
-        results = results.map(this.formatResultItemStructure);
-        results = results.map(this.formatResultItemStructure);
+        results = this.formatResultsStructure(results);
         results = this.filterHandler ? this.filterHandler(results) : results;
         results = this.sortHandler ? this.sortHandler(results) : results;
         results = this.maxResultsToDisplay ? results.slice(0, this.maxResultsToDisplay) : results;
@@ -283,6 +291,7 @@ export default {
 
         if (!results.length && this.query.trim() !== '') {
           this.noResults = true;
+          this.$emit('noResultsFound');
         }
       } catch (e) {
         this.$emit('fetchError', e);
@@ -291,17 +300,20 @@ export default {
     },
 
     /**
-     * @prop {string|object} item
-     * @return {Object} item
+     * @prop {Array} results
+     * @return {Array} results
      */
-    formatResultItemStructure(item) {
-      if (typeof item === 'string') {
-        return {
-          [this.searchKey]: item,
-        };
-      }
+    formatResultsStructure(results) {
+      return results.map((item, index) => {
+        if (typeof item === 'string') {
+          return {
+            itemIndex: index,
+            [this.searchKey]: item,
+          };
+        }
 
-      return item;
+        return { ...item, itemIndex: index };
+      });
     },
 
     /**
@@ -378,6 +390,7 @@ export default {
      */
     highlightItem(index) {
       this.highlightedItem = index;
+      this.$emit('highlightItem', index);
     },
 
     /**
