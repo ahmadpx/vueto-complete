@@ -112,7 +112,6 @@ import constants from './constants';
 
 /**
  * TODO:
- * 2. update input with value on select or initial value
  * 2. base styling
  * 3. tests
  */
@@ -139,6 +138,7 @@ import constants from './constants';
  * @prop {Boolean} useCategories
  * @prop {String} categoryKey
  * @prop {String} categoryLabel
+ * @prop {String} initialValue
  * @prop {Object} styles
  *
  * =SLOTS=
@@ -242,6 +242,9 @@ export default {
       type: String,
     },
     categoryLabel: {
+      type: String,
+    },
+    initialValue: {
       type: String,
     },
     styles: {
@@ -402,6 +405,7 @@ export default {
     handleFocus() {
       this.showResults = true;
       this.isInputFocused = true;
+      this.autoComplete();
       this.$emit('inputFocus');
     },
 
@@ -519,6 +523,10 @@ export default {
   mounted() {
     const debounceTime = this.autoCompleteList.length ? 0 : this.debounceTime;
     this.autoComplete = debounce(this.autoComplete, debounceTime);
+
+    if (this.initialValue) {
+      this.query = this.initialValue;
+    }
   },
 };
 </script>
