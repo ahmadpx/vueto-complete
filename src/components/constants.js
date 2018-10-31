@@ -9,4 +9,5 @@ export default {
   HIGHLIGHT_RESULTS: true,
   NO_RESULTS_MESSAGE: 'No results found',
   SHOW_NO_RESULTS_MESSAGE: true,
+  SEARCH_KEY: 'title',
 };

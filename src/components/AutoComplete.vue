@@ -55,7 +55,7 @@
       <li
           v-for="(item, index) in results"
           :data-test-id="`${testKey}AutoCompleteResultItem_${index}`"
-          :key="item.name"
+          :key="item[searchKey]"
           :style="getItemStyles(index)"
           @click="handleSelect(index)"
           @mouseenter="highlightItem(index)"
@@ -75,7 +75,7 @@
               >{{ item.matchedWord }}</span><span>{{ word }}</span>
             </span>
           </p>
-          <p v-else>{{ item.name }}</p>
+          <p v-else>{{ item[searchKey] }}</p>
         </slot>
       </li>
     </ul>
@@ -92,7 +92,6 @@ import constants from './constants';
 
 /**
  * TODO:
- * 1. add anchor to be instead of the <name> and make it optional
  * 1. add a slot for the item icon and make the scope is the item also
  * 1. multiple selection
  * 4. base styling
@@ -105,6 +104,7 @@ import constants from './constants';
  * =PROPS=
  * @prop {Function} fetchHandler
  * @prop {Array} autoCompleteList
+ * @prop {String} searchKey
  * @prop {Function} sortHandler
  * @prop {Function} filterHandler
  * @prop {Number} minCharsToAutoComplete
@@ -156,6 +156,10 @@ export default {
     autoCompleteList: {
       type: Array,
       default: () => [],
+    },
+    searchKey: {
+      type: String,
+      default: constants.SEARCH_KEY,
     },
     sortHandler: {
       type: Function,
@@ -293,7 +297,7 @@ export default {
     formatResultItemStructure(item) {
       if (typeof item === 'string') {
         return {
-          name: item,
+          [this.searchKey]: item,
         };
       }
 
@@ -306,20 +310,20 @@ export default {
     filteredResultsByQuery(results) {
       return results.filter(item => {
         const query = this.query.replace(/\./gi, '').trim();
-        return query.length ? RegExp(query, 'gi').test(item.name) : false;
+        return query.length ? RegExp(query, 'gi').test(item[this.searchKey]) : false;
       });
     },
 
     /**
      * mark matched words
      * @param {Object} item
-     * @returns {{...item, words}} item
+     * @returns {{...item, matchedWord, words}} item
      */
     markMatchedWords(item) {
-      const { name } = item;
-      const matchedIndex = name.toLowerCase().indexOf(this.query.toLowerCase());
-      const matchedWord = matchedIndex < 0 ? '' : name.slice(matchedIndex, matchedIndex + this.query.length);
-      const words = name.split(new RegExp(this.query, 'i'));
+      const title = item[this.searchKey];
+      const matchedIndex = title.toLowerCase().indexOf(this.query.toLowerCase());
+      const matchedWord = matchedIndex < 0 ? '' : title.slice(matchedIndex, matchedIndex + this.query.length);
+      const words = title.split(new RegExp(this.query, 'i'));
 
       return {
         ...item,
@@ -344,7 +348,7 @@ export default {
         this.highlightedItem = index;
       }
       const selectedItem = this.getHighlightedItem();
-      this.query = selectedItem.name;
+      this.query = selectedItem[this.searchKey];
       this.$emit('select', this.getHighlightedItem());
       this.showResults = false;
       this.noResults = false;
