@@ -52,19 +52,31 @@
         :style="allStyles.resultsList"
         class="autoComplete__list"
     >
-      <li
+      <template
           v-for="(item, index) in results"
           :data-test-id="`${testKey}AutoCompleteResultItem_${index}`"
-          :key="item[searchKey]"
-          :style="getItemStyles(index)"
-          @click="handleSelect(index)"
-          @mouseenter="highlightItem(index)"
-          class="autoComplete__item"
-          :class="{
+      >
+        
+        <li
+          v-if="useCategories && categoryKey && isCategoryStart(item)"
+          :data-test-id="`${testKey}AutoCompleteCategory_${item[categoryKey]}`"
+          :style="allStyles.categoryLabel"
+          :key="`${item[categoryKey]}_${index}`"
+        >
+          {{item[categoryLabel] || item[categoryKey]}}
+        </li>
+        
+        <li
+            :key="item[searchKey]"
+            @click="handleSelect(index)"
+            :style="getItemStyles(index)"
+            @mouseenter="highlightItem(index)"
+            class="autoComplete__item"
+            :class="{
             'autoComplete__item--highlighted': isHighlighted(index)
           }"
-      >
-        <slot name="item" :item="item">
+        >
+          <slot name="item" :item="item">
           <!-- Fallback content -->
           <p v-if="highlightMatched && item.words && item.words.length">
             <slot name="item-icon" :item="item"></slot>
@@ -79,9 +91,11 @@
   
             <slot name="item-caption" :item="item"></slot>
           </p>
+          
           <p v-else>{{ item[searchKey] }}</p>
         </slot>
-      </li>
+        </li>
+      </template>
     </ul>
     
     <slot name="no-results">
@@ -98,6 +112,7 @@ import constants from './constants';
 
 /**
  * TODO:
+ * 2. update input with value on select or initial value
  * 2. base styling
  * 3. tests
  */
@@ -121,6 +136,9 @@ import constants from './constants';
  * @prop {String} testKey
  * @prop {Boolean} emptyResultsOnEmptyQuery
  * @prop {Boolean} highlightResults
+ * @prop {Boolean} useCategories
+ * @prop {String} categoryKey
+ * @prop {String} categoryLabel
  * @prop {Object} styles
  *
  * =SLOTS=
@@ -155,6 +173,7 @@ import constants from './constants';
  * @styleProp {Object} highlightedItem
  * @styleProp {Object} matchedWords
  * @styleProp {Object} highlightedMatchedWords
+ * @styleProp {Object} categoryLabel
  */
 export default {
   name: 'AutoComplete',
@@ -215,6 +234,16 @@ export default {
       type: Boolean,
       default: constants.HIGHLIGHT_RESULTS,
     },
+    useCategories: {
+      type: Boolean,
+      default: constants.USE_CATEGORIES,
+    },
+    categoryKey: {
+      type: String,
+    },
+    categoryLabel: {
+      type: String,
+    },
     styles: {
       type: Object,
       default: () => ({}),
@@ -250,6 +279,7 @@ export default {
         highlightedItem: this.styles.highlightedItem || {},
         matchedWords: this.styles.matchedWords || {},
         highlightedMatchedWords: this.styles.highlightedMatchedWords || {},
+        categoryLabel: this.styles.categoryLabel || {},
       };
     },
   },
@@ -419,6 +449,16 @@ export default {
     },
 
     /**
+     * is category start
+     * @param {Object} item
+     * @return {Boolean} true
+     */
+    isCategoryStart(item) {
+      const prevItem = this.results[item.itemIndex - 1] || {};
+      return item[this.categoryKey] !== prevItem[this.categoryKey];
+    },
+
+    /**
      * get item styles [normal and highlighted]
      * @param {Number} index highlighted
      * @returns {Object} styles
@@ -485,12 +525,27 @@ export default {
 
 <style lang="scss" scoped>
 .autoComplete {
+  * {
+    box-sizing: border-box;
+  }
+
   &__input {
     &--focused {
       background: yellow;
     }
   }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 2px 0 0;
+  }
+
   &__item {
+    p {
+      margin: 0;
+    }
+
     &--highlighted {
       color: blue;
     }

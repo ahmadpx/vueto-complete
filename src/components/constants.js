@@ -10,4 +10,5 @@ export default {
   NO_RESULTS_MESSAGE: 'No results found',
   SHOW_NO_RESULTS_MESSAGE: true,
   SEARCH_KEY: 'title',
+  USE_CATEGORIES: false,
 };
