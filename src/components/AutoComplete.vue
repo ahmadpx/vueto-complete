@@ -79,6 +79,10 @@
         </slot>
       </li>
     </ul>
+    
+    <div v-if="showNoResultsMessage && noResults">
+      {{ noResultsMessage }}
+    </div>
   </div>
 </template>
 
@@ -88,7 +92,6 @@ import constants from './constants';
 
 /**
  * TODO:
- * 1. no results message
  * 1. add anchor to be instead of the <name> and make it optional
  * 1. add a slot for the item icon and make the scope is the item also
  * 1. multiple selection
@@ -109,6 +112,8 @@ import constants from './constants';
  * @prop {Number} debounceTime
  * @prop {Boolean} highlightMatched
  * @prop {String} placeholder
+ * @prop {Boolean} noResultsMessage
+ * @prop {String} showNoResultsMessage
  * @prop {String} testKey
  * @prop {Boolean} emptyResultsOnEmptyQuery
  * @prop {Boolean} highlightResults
@@ -177,6 +182,14 @@ export default {
       type: String,
       default: constants.DEFAULT_PLACEHOLDER,
     },
+    noResultsMessage: {
+      type: String,
+      default: constants.NO_RESULTS_MESSAGE,
+    },
+    showNoResultsMessage: {
+      type: Boolean,
+      default: constants.SHOW_NO_RESULTS_MESSAGE,
+    },
     emptyResultsOnEmptyQuery: {
       type: Boolean,
       default: constants.EMPTY_RESULTS_ON_EMPTY_QUERY,
@@ -200,6 +213,7 @@ export default {
     highlightedItem: 0,
     showResults: false,
     isInputFocused: false,
+    noResults: false,
   }),
 
   /**
@@ -237,8 +251,9 @@ export default {
      */
     async autoComplete() {
       this.showResults = true;
+      this.noResults = false;
 
-      if (this.emptyResultsOnEmptyQuery && this.query === '') {
+      if (this.emptyResultsOnEmptyQuery && this.query.trim() === '') {
         this.showResults = false;
         return;
       }
@@ -252,13 +267,19 @@ export default {
 
         let results = this.autoCompleteList.length ? this.autoCompleteList : await this.fetchHandler(this.query);
         results = results.map(this.formatResultItemStructure);
+        results = results.map(this.formatResultItemStructure);
         results = this.filterHandler ? this.filterHandler(results) : results;
         results = this.sortHandler ? this.sortHandler(results) : results;
         results = this.maxResultsToDisplay ? results.slice(0, this.maxResultsToDisplay) : results;
         results = this.highlightMatched ? results.map(this.markMatchedWords) : results;
+        results = this.filteredResultsByQuery(results);
         this.results = results;
 
         this.$emit('fetchSuccess', results);
+
+        if (!results.length && this.query.trim() !== '') {
+          this.noResults = true;
+        }
       } catch (e) {
         this.$emit('fetchError', e);
       }
@@ -277,6 +298,16 @@ export default {
       }
 
       return item;
+    },
+
+    /**
+     * filter results by query
+     */
+    filteredResultsByQuery(results) {
+      return results.filter(item => {
+        const query = this.query.replace(/\./gi, '').trim();
+        return query.length ? RegExp(query, 'gi').test(item.name) : false;
+      });
     },
 
     /**
@@ -316,6 +347,7 @@ export default {
       this.query = selectedItem.name;
       this.$emit('select', this.getHighlightedItem());
       this.showResults = false;
+      this.noResults = false;
     },
 
     /**

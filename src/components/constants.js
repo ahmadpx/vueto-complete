@@ -7,4 +7,6 @@ export default {
   DEFAULT_TEST_KEY: '',
   EMPTY_RESULTS_ON_EMPTY_QUERY: true,
   HIGHLIGHT_RESULTS: true,
+  NO_RESULTS_MESSAGE: 'No results found',
+  SHOW_NO_RESULTS_MESSAGE: true,
 };
