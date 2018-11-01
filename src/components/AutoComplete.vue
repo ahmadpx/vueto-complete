@@ -126,6 +126,8 @@ import constants from './constants';
  * @prop {Array | String} searchKeys
  * @prop {Function} sortHandler
  * @prop {Function} filterHandler
+ * @prop {Function} resultsDisplayFormatHandler
+ * @prop {Function} selectedItemFormatHandler
  * @prop {Number} minCharsToAutoComplete
  * @prop {Number} maxResultsToDisplay
  * @prop {Number} debounceTime
@@ -147,7 +149,7 @@ import constants from './constants';
  * @slot [name = input-label] to control how to render input label
  * @slot [name = item, slot-scope = item] to control how to render autoComplete results
  * @slot [name = item-icon, slot-scope = item] to control how to render item icon
- * @slot [name = item-label, slot-scope = item] to control how to render item label
+ * @slot [name = item-caption, slot-scope = item] to control how to render item caption
  * @slot [name = no-results] to control how to render no results message
  *
  * =EVENTS=
@@ -198,6 +200,12 @@ export default {
       type: Function,
     },
     filterHandler: {
+      type: Function,
+    },
+    resultsDisplayFormatHandler: {
+      type: Function,
+    },
+    selectedItemFormatHandler: {
       type: Function,
     },
     minCharsToAutoComplete: {
@@ -413,7 +421,9 @@ export default {
         this.highlightedItem = index;
       }
       const selectedItem = this.getHighlightedItem();
-      this.query = selectedItem[this.searchKey];
+      this.query = this.selectedItemFormatHandler
+        ? this.selectedItemFormatHandler(selectedItem)
+        : selectedItem.formattedDisplayTitle;
       this.$emit('select', this.getHighlightedItem());
       this.showResults = false;
       this.noResults = false;
