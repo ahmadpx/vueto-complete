@@ -1,10 +1,12 @@
 {
   "name": "vueto-complete",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "main": "./dist/vueto-completet.min.js",
   "license": "MIT",
-  "authors": ["Ahmed Abdallah<ahmadpx@hotmail.com>"],
+  "authors": [
+    "Ahmed Abdallah<ahmadpx@hotmail.com>"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ahmadpx/vueto-complete.git"
