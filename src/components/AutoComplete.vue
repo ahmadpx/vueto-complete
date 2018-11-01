@@ -703,7 +703,7 @@ export default {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #c0c0c0;
+  background: #a0a0a0;
   margin: -3px 0 0 -3px;
 }
 .lds-roller div:nth-child(1) {
