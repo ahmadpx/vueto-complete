@@ -1,21 +1,21 @@
 <template>
   <div
       class="autoComplete"
-      :data-test-id="`${testKey}AutoCompleteContainer`"
+      :data-test-id="`${testId}AutoCompleteContainer`"
       :style="allStyles.container"
   >
     <div
         :style="getInputWrapperStyles()"
-        :data-test-id="`${testKey}AutoCompleteInputWrapper`"
+        :data-test-id="`${testId}AutoCompleteInputWrapper`"
         class="autoComplete__inputWrapper"
         :class="{
           'autoComplete__inputWrapper--focused': isInputFocused
         }"
     >
       <label
-          :for="`${testKey}AutoCompleteInput`"
+          :for="`${testId}AutoCompleteInput`"
           :style="getInputLabelStyles()"
-          :data-test-id="`${testKey}AutoCompleteInputLabel`"
+          :data-test-id="`${testId}AutoCompleteInputLabel`"
           class="autoComplete__inputLabel"
           :class="{
             'autoComplete__inputLabel--focused': isInputFocused
@@ -27,12 +27,12 @@
       <slot name="input-icon"></slot>
       
       <input
-          :id="`${testKey}AutoCompleteInput`"
+          :id="`${testId}AutoCompleteInput`"
           type="text"
           v-model="query"
           @input="autoComplete"
           :placeholder="placeholder"
-          :data-test-id="`${testKey}AutoCompleteInput`"
+          :data-test-id="`${testId}AutoCompleteInput`"
           :style="getInputStyles()"
           @keyup.down="highlightDown"
           @keyup.up="highlightUp"
@@ -48,18 +48,18 @@
     
     <ul
         v-if="showResults && results.length"
-        :data-test-id="`${testKey}AutoCompleteResultsList`"
+        :data-test-id="`${testId}AutoCompleteResultsList`"
         :style="allStyles.resultsList"
         class="autoComplete__list"
     >
       <template
           v-for="(item, index) in results"
-          :data-test-id="`${testKey}AutoCompleteResultItem_${index}`"
+          :data-test-id="`${testId}AutoCompleteResultItem_${index}`"
       >
         
         <li
           v-if="useCategories && categoryKey && isCategoryStart(item)"
-          :data-test-id="`${testKey}AutoCompleteCategory_${item[categoryKey]}`"
+          :data-test-id="`${testId}AutoCompleteCategory_${item[categoryKey]}`"
           :style="allStyles.categoryLabel"
           :key="`${item[categoryKey]}_${index}`"
         >
@@ -133,7 +133,7 @@ import constants from './constants';
  * @prop {String} placeholder
  * @prop {Boolean} noResultsMessage
  * @prop {String} showNoResultsMessage
- * @prop {String} testKey
+ * @prop {String} testId
  * @prop {Boolean} emptyResultsOnEmptyQuery
  * @prop {Boolean} highlightResults
  * @prop {Boolean} useCategories
@@ -231,9 +231,9 @@ export default {
       type: Boolean,
       default: constants.EMPTY_RESULTS_ON_EMPTY_QUERY,
     },
-    testKey: {
+    testId: {
       type: String,
-      default: constants.DEFAULT_TEST_KEY,
+      default: constants.DEFAULT_TEST_ID,
     },
     highlightResults: {
       type: Boolean,
