@@ -328,6 +328,8 @@ export default {
      * @returns {Promise<void>}
      */
     async autoComplete() {
+      this.$emit('input', this.query);
+
       this.showResults = true;
       this.noResults = false;
       this.fetching = true;
@@ -450,6 +452,7 @@ export default {
         ? this.selectedItemFormatHandler(selectedItem)
         : selectedItem.formattedDisplayTitle;
       this.$emit('select', this.getHighlightedItem());
+      this.$emit('input', this.query);
       this.showResults = false;
       this.noResults = false;
     },
