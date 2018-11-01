@@ -67,7 +67,7 @@
         </li>
         
         <li
-            :key="item[searchKey]"
+            :key="`${item.formattedDisplayTitle}_${index}`"
             @click="handleSelect(index)"
             :style="getItemStyles(index)"
             @mouseenter="highlightItem(index)"
@@ -92,7 +92,7 @@
             <slot name="item-caption" :item="item"></slot>
           </p>
           
-          <p v-else>{{ item[searchKey] }}</p>
+          <p v-else>{{ item.formattedDisplayTitle }}</p>
         </slot>
         </li>
       </template>
@@ -122,7 +122,8 @@ import constants from './constants';
  * =PROPS=
  * @prop {Function} fetchHandler
  * @prop {Array} autoCompleteList
- * @prop {String} searchKey
+ * @prop {String} displayKey
+ * @prop {Array | String} searchKeys
  * @prop {Function} sortHandler
  * @prop {Function} filterHandler
  * @prop {Number} minCharsToAutoComplete
@@ -185,9 +186,13 @@ export default {
       type: Array,
       default: () => [],
     },
-    searchKey: {
+    displayKey: {
       type: String,
-      default: constants.SEARCH_KEY,
+      default: constants.DISPLAY_KEY,
+    },
+    searchKeys: {
+      type: Array | String,
+      default: constants.SEARCH_KEYS,
     },
     sortHandler: {
       type: Function,
@@ -334,28 +339,43 @@ export default {
 
     /**
      * @prop {Array} results
-     * @return {Array} results
+     * @return {Array<{...item, itemIndex, formattedDisplayTitle}>} results
      */
     formatResultsStructure(results) {
       return results.map((item, index) => {
         if (typeof item === 'string') {
           return {
             itemIndex: index,
-            [this.searchKey]: item,
+            formattedDisplayTitle: item,
           };
         }
 
-        return { ...item, itemIndex: index };
+        return {
+          ...item,
+          itemIndex: index,
+          formattedDisplayTitle: this.resultsDisplayFormatHandler
+            ? this.resultsDisplayFormatHandler(item)
+            : item[this.displayKey],
+        };
       });
     },
 
     /**
      * filter results by query
+     * @param {Array} results
+     * @return {Array} results
      */
     filteredResultsByQuery(results) {
       return results.filter(item => {
         const query = this.query.replace(/\./gi, '').trim();
-        return query.length ? RegExp(query, 'gi').test(item[this.searchKey]) : false;
+        const searchKeys =
+          typeof this.searchKeys === 'string'
+            ? [this.searchKeys, 'formattedDisplayTitle']
+            : Array.isArray(this.searchKeys)
+              ? [...this.searchKeys, 'formattedDisplayTitle']
+              : [];
+        const searchContext = searchKeys.map(key => JSON.stringify(item[key])).join('');
+        return query.length ? RegExp(query, 'gi').test(searchContext) : false;
       });
     },
 
@@ -365,7 +385,7 @@ export default {
      * @returns {{...item, matchedWord, words}} item
      */
     markMatchedWords(item) {
-      const title = item[this.searchKey];
+      const title = item.formattedDisplayTitle;
       const matchedIndex = title.toLowerCase().indexOf(this.query.toLowerCase());
       const matchedWord = matchedIndex < 0 ? '' : title.slice(matchedIndex, matchedIndex + this.query.length);
       const words = title.split(new RegExp(this.query, 'i'));
