@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --target wc --name vueto-completet ./src/components/VuetoComplete.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
