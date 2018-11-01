@@ -1,4 +1,4 @@
-# search-widget
+# vueto-complete
 
 ## Project setup
 ```
