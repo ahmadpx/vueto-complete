@@ -45,6 +45,12 @@
             'autoComplete__input--focused': isInputFocused
           }"
       />
+  
+      <slot name="loading-icon">
+        <div v-if="showLoadingIcon && fetching" class="autoComplete__inputLoaderIcon lds-roller">
+          <div v-for="dot in 8" :key="dot"></div>
+        </div>
+      </slot>
     </div>
     
     <ul
@@ -61,6 +67,7 @@
         <li
           v-if="useCategories && categoryKey && isCategoryStart(item)"
           :data-test-id="`${testId}AutoCompleteCategory_${item[categoryKey]}`"
+          class="autoComplete__categoryLabel"
           :style="allStyles.categoryLabel"
           :key="`${item[categoryKey]}_${index}`"
         >
@@ -100,7 +107,7 @@
     </ul>
     
     <slot name="no-results">
-      <div v-if="showNoResultsMessage && noResults">
+      <div class="autoComplete__noResults" v-if="showNoResultsMessage && noResults">
         {{ noResultsMessage }}
       </div>
     </slot>
@@ -113,7 +120,7 @@ import constants from './constants';
 
 /**
  * TODO:
- * 2. base styling
+ * 2. rtl support
  * 3. tests
  */
 
@@ -133,6 +140,8 @@ import constants from './constants';
  * @prop {Number} maxResultsToDisplay
  * @prop {Number} debounceTime
  * @prop {Boolean} highlightMatched
+ * @prop {Boolean} showLoadingIcon
+ * @prop {Boolean} fetchOnFocus
  * @prop {String} placeholder
  * @prop {Boolean} noResultsMessage
  * @prop {String} showNoResultsMessage
@@ -221,6 +230,14 @@ export default {
       type: Boolean,
       default: constants.HIGHLIGHT_MATCHED_WORDS,
     },
+    showLoadingIcon: {
+      type: Boolean,
+      default: constants.SHOW_LOADING_ICON,
+    },
+    fetchOnFocus: {
+      type: Boolean,
+      default: constants.FETCH_ON_FOCUS,
+    },
     maxResultsToDisplay: {
       type: Number,
     },
@@ -273,6 +290,7 @@ export default {
     showResults: false,
     isInputFocused: false,
     noResults: false,
+    fetching: false,
   }),
 
   /**
@@ -312,15 +330,20 @@ export default {
     async autoComplete() {
       this.showResults = true;
       this.noResults = false;
+      this.fetching = true;
 
       if (this.emptyResultsOnEmptyQuery && this.query.trim() === '') {
         this.showResults = false;
+        this.fetching = false;
         return;
       }
 
       this.results = this.highlightMatched ? this.results.map(this.markMatchedWords) : this.results;
 
-      if (this.query.length < this.minCharsToAutoComplete) return;
+      if (this.query.length < this.minCharsToAutoComplete) {
+        this.fetching = false;
+        return;
+      }
 
       try {
         this.$emit('startedFetching');
@@ -344,6 +367,7 @@ export default {
         this.$emit('fetchError', e);
       }
       this.$emit('finishedFetching');
+      this.fetching = false;
     },
 
     /**
@@ -436,7 +460,7 @@ export default {
     handleFocus() {
       this.showResults = true;
       this.isInputFocused = true;
-      this.autoComplete();
+      this.fetchOnFocus && this.autoComplete();
       this.$emit('inputFocus');
     },
 
@@ -444,7 +468,6 @@ export default {
      * handle blur
      */
     handleBlur() {
-      this.showResults = true;
       this.isInputFocused = false;
       this.$emit('inputBlur');
     },
@@ -583,33 +606,168 @@ export default {
 
 <style lang="scss" scoped>
 .autoComplete {
+  width: 400px;
+
+  &,
   * {
     box-sizing: border-box;
   }
 
+  &__inputWrapper {
+    position: relative;
+    width: 100%;
+  }
+
   &__input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 4px;
+    border: 1px solid #d0d0d0;
+    font-size: 14px;
+
     &--focused {
-      background: yellow;
+      border: 1px solid #c0c0c0;
+      outline: none;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     }
   }
 
+  &__inputLoaderIcon {
+    position: absolute;
+    top: -4px;
+    right: 0;
+  }
+
   &__list {
+    width: 100%;
     list-style: none;
     padding: 0;
-    margin: 2px 0 0;
+    margin: 4px 0 0;
+    border: 1px solid #d0d0d0;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    max-height: 50vh;
+    overflow-y: scroll;
   }
 
   &__item {
+    padding: 5px 15px;
+    width: 100%;
+
     p {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       margin: 0;
     }
 
     &--highlighted {
-      color: blue;
+      background: #e0e0e0;
     }
   }
+
   &__itemMatched {
-    color: blue;
+    font-weight: bold;
+  }
+
+  &__categoryLabel {
+    background: #efefef;
+    padding: 5px 15px;
+    border-bottom: 1px solid #d0d0d0;
+  }
+
+  &__noResults {
+    padding: 5px 15px;
+    margin: 4px 0 0;
+    border: 1px solid #d0d0d0;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+  }
+}
+
+.lds-roller {
+  display: inline-block;
+  width: 64px;
+  height: 100%;
+  transform: scale(0.5);
+}
+.lds-roller div {
+  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  transform-origin: 32px 32px;
+}
+.lds-roller div:after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c0c0c0;
+  margin: -3px 0 0 -3px;
+}
+.lds-roller div:nth-child(1) {
+  animation-delay: -0.036s;
+}
+.lds-roller div:nth-child(1):after {
+  top: 50px;
+  left: 50px;
+}
+.lds-roller div:nth-child(2) {
+  animation-delay: -0.072s;
+}
+.lds-roller div:nth-child(2):after {
+  top: 54px;
+  left: 45px;
+}
+.lds-roller div:nth-child(3) {
+  animation-delay: -0.108s;
+}
+.lds-roller div:nth-child(3):after {
+  top: 57px;
+  left: 39px;
+}
+.lds-roller div:nth-child(4) {
+  animation-delay: -0.144s;
+}
+.lds-roller div:nth-child(4):after {
+  top: 58px;
+  left: 32px;
+}
+.lds-roller div:nth-child(5) {
+  animation-delay: -0.18s;
+}
+.lds-roller div:nth-child(5):after {
+  top: 57px;
+  left: 25px;
+}
+.lds-roller div:nth-child(6) {
+  animation-delay: -0.216s;
+}
+.lds-roller div:nth-child(6):after {
+  top: 54px;
+  left: 19px;
+}
+.lds-roller div:nth-child(7) {
+  animation-delay: -0.252s;
+}
+.lds-roller div:nth-child(7):after {
+  top: 50px;
+  left: 14px;
+}
+.lds-roller div:nth-child(8) {
+  animation-delay: -0.288s;
+}
+.lds-roller div:nth-child(8):after {
+  top: 45px;
+  left: 10px;
+}
+@keyframes lds-roller {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>
