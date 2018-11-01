@@ -1,18 +1,19 @@
 {
-  "name": "search-widget",
+  "name": "vueto-complete",
   "version": "0.1.0",
   "private": true,
+  "main": "./dist/vueto-completet.min.js",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "lodash": "^4.17.11",
+    "@babel/core": "^7.1.2",
+    "lodash.debounce": "^4.0.8",
     "node-sass": "^4.9.4",
     "sass-loader": "^7.1.0",
-    "vue": "^2.5.17",
-    "web-js-sdk": "git+ssh://git@github.com/tajawal/web-js-sdk.git"
+    "vue": "^2.5.17"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.5",
