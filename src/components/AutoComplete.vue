@@ -1,6 +1,7 @@
 <template>
   <div
       class="autoComplete"
+      ref="autoCompleteContainer"
       :data-test-id="`${testId}AutoCompleteContainer`"
       :style="allStyles.container"
   >
@@ -194,7 +195,7 @@ export default {
     },
     searchKeys: {
       type: Array | String,
-      default: constants.SEARCH_KEYS,
+      default: () => constants.SEARCH_KEYS,
     },
     sortHandler: {
       type: Function,
@@ -493,6 +494,16 @@ export default {
     },
 
     /**
+     * handle outside clicks
+     * @param {Event} e
+     */
+    handleOutsideClicks(e) {
+      if (!this.$refs.autoCompleteContainer.contains(e.target)) {
+        this.showResults = false;
+      }
+    },
+
+    /**
      * get item styles [normal and highlighted]
      * @param {Number} index highlighted
      * @returns {Object} styles
@@ -557,6 +568,15 @@ export default {
     if (this.initialValue) {
       this.query = this.initialValue;
     }
+
+    document.addEventListener('click', this.handleOutsideClicks, false);
+  },
+
+  /**
+   * destroyed
+   */
+  destroyed() {
+    document.removeEventListener('click', this.handleOutsideClicks, false);
   },
 };
 </script>
