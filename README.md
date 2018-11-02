@@ -93,17 +93,34 @@ yarn add vueto-complete
 
 ## [Events](#events)
 
-| Name                                          | Payload      |  Description|                
-| :---------------------------------------------| :-------  | :---------------------| 
-| `autoCompleteList`                            | Array     | empty array [ ]       |       
-| `fetchHandler`                                | Function  | no default            |        
-| `displayKey`                                  | String    | title                 |        
-| `searchKeys`                                  | Array     | [`displayKey`]        |        
-| `sortHandler`                                 | Function  | no default            |        
-| `filterHandler`                               | Function  | no default            |        
-| `resultsDisplayFormatHandler`                 | Function  | no default            |        
-| `selectedItemFormatHandler`                   | Function  | no default            |        
-| `minCharsToAutoComplete`                      | Number    | 1                     |        
+| Name                                          | Payload               |  Description|                
+| :---------------------------------------------| :---------------------| :-----------------------------------------------------| 
+| `startedFetching`                             | no payload            | fired before fetch start                              |       
+| `fetchSuccess`                                | results list          | fired on fetch success                                |        
+| `fetchError`                                  | error                 | fired on fetch error                                  |        
+| `finishedFetching`                            | no payload            | fired after fetch resolve/reject                      |        
+| `select`                                      | selected item object  | fired on selecting autoComplete item                  |        
+| `inputFocus`                                  | no payload            | fired on focusing the input                           |        
+| `inputBlur`                                   | no payload            | fired on bluring the input                            |        
+| `highlightItem`                               | item index            | fired on highlighting new item with hover/keyboard    |        
+| `noResultsFound`                              | no payload            | fired on when no results found                        |  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 ## [Styling](#styling)
 

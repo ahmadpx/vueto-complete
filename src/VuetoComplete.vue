@@ -170,8 +170,8 @@ import constants from './constants';
  * @event select [fired on selecting autoComplete item]
  * @event inputFocus [fired on focusing the input]
  * @event inputBlur [fired on bluring the input]
- * @event highlightItem [fired on bluring the input]
- * @event noResultsFound [fired on bluring the input]
+ * @event highlightItem [fired on highlighting new item with hover/keyboard]
+ * @event noResultsFound [fired on when no results found]
  *
  * =STYLES=
  * @styleProp {Object} container
