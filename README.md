@@ -76,7 +76,52 @@ yarn add vueto-complete
 | `categoryKey`                                 | String    | no default            | only when `useCategories` is true             |  the key to categorise with                                                                                                                                                                               |       
 | `categoryLabel`                               | String    | no default            | No                                            |  the label to show for the category, if it's not provided the `categoryKey` prop will be used as a label                                                                                                  |       
 | `initialValue`                                | String    | empty string ' '      | No                                            |  initial value for the input query                                                                                                                                                                        |       
-| `styles`                                      | Object    | empty object  { }     | No                                            |  styles object to style each element in the component in all its states                                                                                                                                   |       
+| `styles`                                      | Object    | empty object  { }     | No                                            |  styles object to style each element in the component in all its states                                                                                                                                   |
+
+
+## [Slots](#slots)
+
+| Name                                          | Scope                 |  Description|                
+| :---------------------------------------------| :-------------------  | :-----------------------------------------| 
+| `input-icon`                                  | no scope              | it renders icon for the input             |       
+| `input-label`                                 | no scope              | it renders label for the input            |        
+| `item`                                        | current item object   | it renders the result item                |        
+| `item-icon`                                   | current item object   | it renders the result item icon           |          
+| `item-caption`                                | current item object   | it renders the result item caption        |        
+| `no-results`                                  | no scope              | it renders the no results message         |        
+
+
+## [Events](#events)
+
+| Name                                          | Payload      |  Description|                
+| :---------------------------------------------| :-------  | :---------------------| 
+| `autoCompleteList`                            | Array     | empty array [ ]       |       
+| `fetchHandler`                                | Function  | no default            |        
+| `displayKey`                                  | String    | title                 |        
+| `searchKeys`                                  | Array     | [`displayKey`]        |        
+| `sortHandler`                                 | Function  | no default            |        
+| `filterHandler`                               | Function  | no default            |        
+| `resultsDisplayFormatHandler`                 | Function  | no default            |        
+| `selectedItemFormatHandler`                   | Function  | no default            |        
+| `minCharsToAutoComplete`                      | Number    | 1                     |        
+
+## [Styling](#styling)
+
+| Key                                          | description      |  Description|                
+| :---------------------------------------------| :-------  | :---------------------| 
+| `autoCompleteList`                            | Array     | empty array [ ]       |       
+| `fetchHandler`                                | Function  | no default            |        
+| `displayKey`                                  | String    | title                 |        
+| `searchKeys`                                  | Array     | [`displayKey`]        |        
+| `sortHandler`                                 | Function  | no default            |        
+| `filterHandler`                               | Function  | no default            |        
+| `resultsDisplayFormatHandler`                 | Function  | no default            |        
+| `selectedItemFormatHandler`                   | Function  | no default            |        
+| `minCharsToAutoComplete`                      | Number    | 1                     |        
+| `maxResultsToDisplay`                         | Number    | Infinity              |        
+| `debounceTime`                                | Number    | 300 ms                |        
+| `highlightMatched`                            | Boolean   | true                  |        
+| `showLoadingIcon`                             | Boolean   | true                  |        
 
 ## LICENSE
 
