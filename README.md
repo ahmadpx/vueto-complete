@@ -13,14 +13,13 @@
 ## Index
 
 * [Features](#features)
-* [Installation](#installation)
-* [Usage](#usage)
+* [Installation](#installation) <!-- * [Usage](#usage) -->
 * [Props](#props)
 * [Slots](#slots)
 * [Events](#events)
 * [Styling](#styling)
 * [LICENSE](#license)
-* [Contribution](#contribution)
+<!-- * [Contribution](#contribution) -->
 
 ## Features
 
@@ -106,39 +105,24 @@ yarn add vueto-complete
 | `noResultsFound`                              | no payload            | fired on when no results found                        |  
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
 ## [Styling](#styling)
 
-| Key                                          | description      |  Description|                
-| :---------------------------------------------| :-------  | :---------------------| 
-| `autoCompleteList`                            | Array     | empty array [ ]       |       
-| `fetchHandler`                                | Function  | no default            |        
-| `displayKey`                                  | String    | title                 |        
-| `searchKeys`                                  | Array     | [`displayKey`]        |        
-| `sortHandler`                                 | Function  | no default            |        
-| `filterHandler`                               | Function  | no default            |        
-| `resultsDisplayFormatHandler`                 | Function  | no default            |        
-| `selectedItemFormatHandler`                   | Function  | no default            |        
-| `minCharsToAutoComplete`                      | Number    | 1                     |        
-| `maxResultsToDisplay`                         | Number    | Infinity              |        
-| `debounceTime`                                | Number    | 300 ms                |        
-| `highlightMatched`                            | Boolean   | true                  |        
-| `showLoadingIcon`                             | Boolean   | true                  |        
+| Key                                           | description                                       |                
+| :---------------------------------------------| :-------------------------------------------------| 
+| `container`                                   | to style the component container                  |       
+| `input`                                       | to style the input                                |        
+| `focusedInput`                                | to style the input in the focus state             |        
+| `inputWrapper`                                | to style the input wrapper                        |        
+| `focusedInputWrapper`                         | to style the input wrapper in the focus state     |        
+| `inputLabel`                                  | to style the input label                          |        
+| `focusedInputLabel`                           | to style the input label in the focus state       |        
+| `resultsList`                                 | to style the results list                         |        
+| `resultItem`                                  | to style the result item                          |        
+| `highlightedItem`                             | to style the result item in the highlight state   |        
+| `matchedWords`                                | to style the matched words                        |        
+| `highlightedMatchedWords`                     | to style the matched words in the highlight state |        
+| `categoryLabel`                               | to style the category label                       |   
+
 
 ## LICENSE
 
