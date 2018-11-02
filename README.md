@@ -24,12 +24,15 @@
 
 ## Features
 
-* WAI-ARIA complete autosuggest component built with the power of Vue.
-* Full control over rendering with built in defaults or custom components for rendering.
-* Easily integrate AJAX data fetching for list presentation.
-* Supports multiple sections.
-* No opinions on CSS, full control over styling.
-* Rigorously tested.
+* Supports full control over functionality and display.
+* Supports regular lists as well as AJAX fetching.
+* Supports grouping of results.
+* Supports slots for custom rendering and formatters for custom formatting.
+* Supports full control over styling.
+* Supports full control over filtering and sorting results.
+* Supports multiple keys to search against.
+* Supports keyboard accessibility.
+* Fires events for all its lifesycle hooks.
 
 ## Installation
 
@@ -47,17 +50,33 @@ yarn add vueto-complete
 
 ## [Props](#props)
 
-| Prop                                        | Type     | Required | Description                                               |
-| :------------------------------------------ | :------- | :------: | :-------------------------------------------------------- |
-| [`suggestions`](#suggestionsProp)           | Array    |    ✓     | Suggestions to be rendered. e.g.`suggestions: [{data: ['harry','ron','hermione']}]`                               |
-| [`input-props`](#inputPropsTable)            | Object   |    ✓     | Add props to the `<input>`.                               |
-| [`section-configs`](#sectionConfigsProp)     | Object   |          | Define multiple sections `<input>`.                       |
-| [`render-suggestion`](#renderSuggestion)     | Function |          | Tell vueto-complete how to render inside the `<li>` tag. Overrides what is inside the default suggestion template slot. |
-| [`get-suggestion-value`](#getSuggestionValue) | Function |          | Tells vueto-complete what to put in the `<input/>` value |
-| `@selected`            | Function   |    ✓     | suggestion select handler. equivalent to sectionConfigs `on-selected` but for all items             |
-| `component-attr-id-autosuggest` | String |          | `id` of entire component |
-| `component-attr-class-autosuggest-results-container` | String |          | `class` of container of results container |
-| `component-attr-class-autosuggest-results` | String |          | `class` of results container |
+| Prop                                          | Type      |  Default              | Required                                      | Description                                                                                                                                                                                               |                
+| :---------------------------------------------| :-------  | :---------------------| :---------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `autoCompleteList`                            | Array     | empty array [ ]       | only when no `fetchHandler` provided          | `autoCompleteList` is required only if no `fetchHandler` provided, it can be array of strings or objects                                                                                                  |      
+| `fetchHandler`                                | Function  | no default            | only when no `autoCompleteList` provided      | `fetchHandler` for fetching AJAX results, it's a function returns a promise resolves to a list, it's required only if no `autoCompleteList` provided.                                                     |       
+| `displayKey`                                  | String    | title                 | only when the results are a list of objects   | `displayKey` is the key that will be displayed in the list, it's required only if the list is array of objects and you can override how you display the results with `resultsDisplayFormatHandler` prop   |       
+| `searchKeys`                                  | Array     | [`displayKey`]        | No                                            |  you can provide multiple keys from the result object to search against while autoCompleting                                                                                                              |       
+| `sortHandler`                                 | Function  | no default            | No                                            |  a function to sort the autoCompleted results                                                                                                                                                             |       
+| `filterHandler`                               | Function  | no default            | No                                            |  a function to filter the autoCompleted results                                                                                                                                                           |       
+| `resultsDisplayFormatHandler`                 | Function  | no default            | No                                            |  a function to format how the results get displayed                                                                                                                                                       |       
+| `selectedItemFormatHandler`                   | Function  | no default            | No                                            |  a function to format how the selected result get displayed on the autoComplete input                                                                                                                     |       
+| `minCharsToAutoComplete`                      | Number    | 1                     | No                                            |  the minimum characters to start autoComplete or fetch                                                                                                                                                    |       
+| `maxResultsToDisplay`                         | Number    | Infinity              | No                                            |  the maximum results to display                                                                                                                                                                           |       
+| `debounceTime`                                | Number    | 300 ms                | No                                            |  debounce time for the `input` event while fetching results                                                                                                                                               |       
+| `highlightMatched`                            | Boolean   | true                  | No                                            |  highlight matched words as the query                                                                                                                                                                     |       
+| `showLoadingIcon`                             | Boolean   | true                  | No                                            |  show loading icon while fetching results                                                                                                                                                                 |       
+| `fetchOnFocus`                                | Boolean   | false                 | No                                            |  fetch results with the current query on input focus                                                                                                                                                      |       
+| `placeholder`                                 | String    | empty string          | No                                            |  autoComplete input placeholder                                                                                                                                                                           |       
+| `noResultsMessage`                            | Boolean   | `No results found`    | No                                            |  the message to display when no results matches the current query                                                                                                                                         |       
+| `showNoResultsMessage`                        | String    | true                  | No                                            |  show a message when no results matches the current query                                                                                                                                                 |       
+| `testId`                                      | String    | empty string          | No                                            |  `id` to define a data attribute `data-test-id` for each element in the component for `automation test`                                                                                                   |       
+| `emptyResultsOnEmptyQuery`                    | Boolean   | true                  | No                                            |  empty the results array when the input query get empty                                                                                                                                                   |       
+| `highlightResults`                            | Boolean   | true                  | No                                            |  highlight results with hovering over it or using keyboard                                                                                                                                                |       
+| `useCategories`                               | Boolean   | false                 | No                                            |  categorise results                                                                                                                                                                                       |       
+| `categoryKey`                                 | String    | no default            | only when `useCategories` is true             |  the key to categorise with                                                                                                                                                                               |       
+| `categoryLabel`                               | String    | no default            | No                                            |  the label to show for the category, if it's not provided the `categoryKey` prop will be used as a label                                                                                                  |       
+| `initialValue`                                | String    | empty string ' '      | No                                            |  initial value for the input query                                                                                                                                                                        |       
+| `styles`                                      | Object    | empty object  { }     | No                                            |  styles object to style each element in the component in all its states                                                                                                                                   |       
 
 ## LICENSE
 
