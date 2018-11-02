@@ -14,7 +14,7 @@
 
 * [Features](#features)
 * [Installation](#installation) 
-* [Examples](#examples)
+* [Example](#example)
 * [Props](#props)
 * [Slots](#slots)
 * [Events](#events)
@@ -46,11 +46,11 @@ or
 yarn add vueto-complete
 ```
 
-## Examples
+## Example
 
 ```html
 <template>
-  <div id="HotelsSearchBox" data-test-id="HotelsSearchBox">
+  <div>
     <VuetoComplete
         v-model="query"
         :auto-complete-list="list"

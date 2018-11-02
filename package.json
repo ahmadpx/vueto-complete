@@ -31,7 +31,12 @@
     "auto-complete",
     "vue-autocomplete",
     "vueto-autocomplete",
-    "auto-suggest"
+    "auto-suggest",
+    "autosuggest",
+    "typeahead",
+    "dropdown",
+    "select",
+    "accessibility"
   ],
   "devDependencies": {
     "@babel/core": "^7.1.2",
