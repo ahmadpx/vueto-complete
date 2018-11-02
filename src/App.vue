@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import AutoComplete from './components/VuetoComplete';
+  import AutoComplete from './VuetoComplete';
   
   const styles = {
     container: {

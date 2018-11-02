@@ -2,7 +2,12 @@
   "name": "vueto-complete",
   "version": "0.1.3",
   "private": false,
-  "main": "./dist/vueto-completet.min.js",
+  "main": "./dist/vueto-completet.umd.js",
+  "module": "./dist/vueto-completet.esm.js",
+  "unpkg": "./dist/vueto-completet.min.js",
+  "browser": {
+    "./sfc": "src/VuetoComplete.vue"
+  },
   "license": "MIT",
   "authors": [
     "Ahmed Abdallah<ahmadpx@hotmail.com>"
@@ -12,8 +17,8 @@
     "url": "git+https://github.com/ahmadpx/vueto-complete.git"
   },
   "scripts": {
-    "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build --target wc --name vueto-completet ./src/components/VuetoComplete.vue",
+    "dev": "vue-cli-service serve --open ./src/main.js",
+    "build": "vue-cli-service build --target lib --name vueto-completet ./src/VuetoComplete.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

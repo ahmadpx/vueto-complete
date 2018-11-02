@@ -1,8 +1,17 @@
 <meta charset="utf-8">
 <title>vueto-completet demo</title>
 <script src="https://unpkg.com/vue"></script>
-<script src="./vueto-completet.js"></script>
+<script src="./vueto-completet.umd.js"></script>
+<link rel="stylesheet" href="./vueto-completet.css">
 
+<div id="app">
+  <demo></demo>
+</div>
 
-<vueto-completet></vueto-completet>
-
+<script>
+new Vue({
+  components: {
+    demo: vueto-completet
+  }
+}).$mount('#app')
+</script>
