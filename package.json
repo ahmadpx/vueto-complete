@@ -1,6 +1,6 @@
 {
   "name": "vueto-complete",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": false,
   "main": "./dist/vueto-completet.umd.js",
   "module": "./dist/vueto-completet.esm.js",
