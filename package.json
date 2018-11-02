@@ -2,9 +2,9 @@
   "name": "vueto-complete",
   "version": "0.1.4",
   "private": false,
-  "main": "./dist/vueto-completet.umd.js",
-  "module": "./dist/vueto-completet.esm.js",
-  "unpkg": "./dist/vueto-completet.min.js",
+  "main": "./dist/vueto-completet.umd.min.js",
+  "module": "./dist/vueto-completet.common.js",
+  "unpkg": "./dist/vueto-completet.umd.min.js",
   "browser": {
     "./sfc": "src/VuetoComplete.vue"
   },
