@@ -25,6 +25,14 @@
     "lodash.debounce": "^4.0.8",
     "vue": "^2.5.17"
   },
+  "keywords": [
+    "vue",
+    "autocomplete",
+    "auto-complete",
+    "vue-autocomplete",
+    "vueto-autocomplete",
+    "auto-suggest"
+  ],
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "node-sass": "^4.9.4",
