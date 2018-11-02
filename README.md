@@ -13,7 +13,8 @@
 ## Index
 
 * [Features](#features)
-* [Installation](#installation) <!-- * [Usage](#usage) -->
+* [Installation](#installation) 
+* [Examples](#examples)
 * [Props](#props)
 * [Slots](#slots)
 * [Events](#events)
@@ -45,9 +46,76 @@ or
 yarn add vueto-complete
 ```
 
+## Examples
 
+```html
+<template>
+  <div id="HotelsSearchBox" data-test-id="HotelsSearchBox">
+    <VuetoComplete
+        v-model="query"
+        :auto-complete-list="list"
+        :styles="styles"
+    >
+    </VuetoComplete>
+  </div>
+</template>
 
-## [Props](#props)
+<script>
+  import VuetoComplete from 'vueto-complete';
+  
+  const styles = {
+    container: {
+      maxWidth: '500px'
+    },
+    input: {},
+    focusedInput: {},
+    inputWrapper: {},
+    focusedInputWrapper: {},
+    inputLabel: {},
+    focusedInputLabel: {},
+    resultsList: {},
+    resultItem: {},
+    highlightedItem: {},
+    matchedWords: {},
+    highlightedMatchedWords: {},
+    categoryLabel: {},
+  };
+  
+  export default {
+    name: 'app',
+    data: () => ({
+      query: '',
+      styles,
+      list: [
+        'Cairo, Egypt',
+        'Cairo, Thomasville, United States',
+        'Cairo, Southwest Illinois, United States',
+        'Giza, Cairo, Egypt',
+        'Cairo, Central West Virginia, United States',
+        'Cairo Montenotte, Savona - Riviera Delle Palme, Italy',
+        '6Th Of October City, Cairo, Egypt',
+        'Cairo, New York, United States',
+        'Cairon, Calvados, France',
+        'Cairo City Center Hotel, Cairo, EG',
+        'Cairo Heliopolis Towers hotel, Cairo, EG',
+        'Havana Hotel Cairo, Cairo, EG',
+        'Barcelo Cairo Pyramids, Cairo, EG',
+        'Novotel Cairo Airport, Cairo, EG',
+        'Staybridge Suites Cairo Citystars, Cairo, EG',
+        'Hilton Zamalek Residence Cairo, Cairo, EG',
+        'Mercure Cairo Le Sphinx, Cairo, EG',
+        'Golden Park Hotel Cairo, Heliopolis, Cairo, EG',
+        'Moevenpick Resort Cairo Pyramids, Cairo, EG',
+      ],
+    }),
+    components: {
+      VuetoComplete,
+    }
+  };
+</script>
+```
+
+## Props
 
 | Prop                                          | Type      |  Default              | Required                                      | Description                                                                                                                                                                                               |                
 | :---------------------------------------------| :-------  | :---------------------| :---------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -78,7 +146,7 @@ yarn add vueto-complete
 | `styles`                                      | Object    | empty object  { }     | No                                            |  styles object to style each element in the component in all its states                                                                                                                                   |
 
 
-## [Slots](#slots)
+## Slots
 
 | Name                                          | Scope                 |  Description|                
 | :---------------------------------------------| :-------------------  | :-----------------------------------------| 
@@ -90,22 +158,23 @@ yarn add vueto-complete
 | `no-results`                                  | no scope              | it renders the no results message         |        
 
 
-## [Events](#events)
+## Events
 
 | Name                                          | Payload               |  Description|                
-| :---------------------------------------------| :---------------------| :-----------------------------------------------------| 
-| `startedFetching`                             | no payload            | fired before fetch start                              |       
-| `fetchSuccess`                                | results list          | fired on fetch success                                |        
-| `fetchError`                                  | error                 | fired on fetch error                                  |        
-| `finishedFetching`                            | no payload            | fired after fetch resolve/reject                      |        
-| `select`                                      | selected item object  | fired on selecting autoComplete item                  |        
-| `inputFocus`                                  | no payload            | fired on focusing the input                           |        
-| `inputBlur`                                   | no payload            | fired on bluring the input                            |        
-| `highlightItem`                               | item index            | fired on highlighting new item with hover/keyboard    |        
-| `noResultsFound`                              | no payload            | fired on when no results found                        |  
+| :---------------------------------------------| :---------------------| :-------------------------------------------------------------| 
+| `input`                                       | no payload            | fired on input change, you can use `v-model` on the component |       
+| `startedFetching`                             | no payload            | fired before fetch start                                      |       
+| `fetchSuccess`                                | results list          | fired on fetch success                                        |        
+| `fetchError`                                  | error                 | fired on fetch error                                          |        
+| `finishedFetching`                            | no payload            | fired after fetch resolve/reject                              |        
+| `select`                                      | selected item object  | fired on selecting autoComplete item                          |        
+| `inputFocus`                                  | no payload            | fired on focusing the input                                   |        
+| `inputBlur`                                   | no payload            | fired on bluring the input                                    |        
+| `highlightItem`                               | item index            | fired on highlighting new item with hover/keyboard            |        
+| `noResultsFound`                              | no payload            | fired on when no results found                                |  
     
     
-## [Styling](#styling)
+## Styling
 
 | Key                                           | description                                       |                
 | :---------------------------------------------| :-------------------------------------------------| 

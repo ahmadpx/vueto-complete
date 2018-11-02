@@ -163,6 +163,7 @@ import constants from './constants';
  * @slot [name = no-results] to control how to render no results message
  *
  * =EVENTS=
+ * @event input [fired on input change, you can use `v-model` on the component]
  * @event startedFetching [fired before fetch start]
  * @event fetchSuccess [fired on fetch success]
  * @event fetchError [fired on fetch error]
