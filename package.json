@@ -9,9 +9,7 @@
     "./sfc": "src/VuetoComplete.vue"
   },
   "license": "MIT",
-  "authors": [
-    "Ahmed Abdallah<ahmadpx@hotmail.com>"
-  ],
+  "author": "Ahmed Abdallah <ahmadpx@hotmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ahmadpx/vueto-complete.git"
