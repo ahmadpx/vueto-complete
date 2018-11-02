@@ -1,7 +1,7 @@
 <div>
 <h1>vueto-complete</h1>
 
-<p>yet another vue autoComplete component</a></p>
+<p>vue autoComplete component</a></p>
 </div>
 
 <hr />
