@@ -12,7 +12,7 @@ vue autoComplete component
 
 * [Features](#features)
 * [Installation](#installation) 
-* [Example](#example)
+* [Examples](#examples)
 * [Props](#props)
 * [Slots](#slots)
 * [Events](#events)
@@ -44,7 +44,7 @@ or
 yarn add vueto-complete
 ```
 
-## Example
+## Examples
 
 ```html
 <template>
@@ -85,24 +85,65 @@ yarn add vueto-complete
         'Giza, Cairo, Egypt',
         'Cairo, Central West Virginia, United States',
         'Cairo Montenotte, Savona - Riviera Delle Palme, Italy',
-        '6Th Of October City, Cairo, Egypt',
-        'Cairo, New York, United States',
-        'Cairon, Calvados, France',
-        'Cairo City Center Hotel, Cairo, EG',
-        'Cairo Heliopolis Towers hotel, Cairo, EG',
-        'Havana Hotel Cairo, Cairo, EG',
-        'Barcelo Cairo Pyramids, Cairo, EG',
-        'Novotel Cairo Airport, Cairo, EG',
-        'Staybridge Suites Cairo Citystars, Cairo, EG',
-        'Hilton Zamalek Residence Cairo, Cairo, EG',
-        'Mercure Cairo Le Sphinx, Cairo, EG',
-        'Golden Park Hotel Cairo, Heliopolis, Cairo, EG',
-        'Moevenpick Resort Cairo Pyramids, Cairo, EG',
       ],
     }),
     components: {
       VuetoComplete,
     }
+  };
+</script>
+```
+
+```html
+<template>
+  <div>
+    <VuetoComplete
+        :fetch-handler="getTodos"
+        display-key="title"
+        :filter-handler="getCompleted"
+        @select="onSelect"
+    >
+    </VuetoComplete>
+  </div>
+</template>
+
+<script>
+  import VuetoComplete from 'vueto-complete';
+  
+  export default {
+    name: 'app',
+    methods: {
+      /**
+       * get todos
+       *
+       * @param {String} query
+       * @returns {Promise}
+       */
+      getTodos(query) {
+        return fetch('https://jsonplaceholder.typicode.com/todos')
+          .then(response => response.json());
+      },
+      
+      /**
+       * filter todos by completed
+       * @param {Array<object>} todos
+       * @return {Array<object>} todos
+       */
+      getCompleted(todos) {
+        return todos.filter(({ completed }) => completed);
+      },
+  
+      /**
+       * handle select
+       * @param {Object} todo
+       */
+      onSelect(todo) {
+        console.log(todo);
+      }
+    },
+    components: {
+      VuetoComplete,
+    },
   };
 </script>
 ```
