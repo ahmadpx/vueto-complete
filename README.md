@@ -168,7 +168,7 @@ yarn add vueto-complete
 </template>
 
 <script>
-  import VuetoComplete from './VuetoComplete';
+  import VuetoComplete from 'vueto-complete';
   
   export default {
     name: 'app',
