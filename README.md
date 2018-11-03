@@ -160,6 +160,9 @@ yarn add vueto-complete
         :max-results-to-display="5"
         @select="onSelect"
     >
+      <template name="item-icon" slot-scope="{ item }">
+        <i :class="`post-icon-${item.id}`"></i>
+      </template>
     </VuetoComplete>
   </div>
 </template>
