@@ -1,9 +1,12 @@
 <template>
   <div>
     <VuetoComplete
-        :fetch-handler="getTodos"
+        :fetch-handler="getPosts"
         display-key="title"
-        :filter-handler="getCompleted"
+        :search-keys="['title', 'body']"
+        :debounce-time="200"
+        :min-chars-to-auto-complete="2"
+        :max-results-to-display="5"
         @select="onSelect"
     >
     </VuetoComplete>
@@ -22,26 +25,17 @@
        * @param {String} query
        * @returns {Promise}
        */
-      getTodos(query) {
-        return fetch('https://jsonplaceholder.typicode.com/todos')
+      getPosts(query) {
+        return fetch('https://jsonplaceholder.typicode.com/posts')
           .then(response => response.json());
       },
       
       /**
-       * filter todos by completed
-       * @param {Array<object>} todos
-       * @return {Array<object>} todos
-       */
-      getCompleted(todos) {
-        return todos.filter(({ completed }) => completed);
-      },
-  
-      /**
        * handle select
-       * @param {Object} todo
+       * @param {Object} post
        */
-      onSelect(todo) {
-        console.log(todo);
+      onSelect(post) {
+        console.log(post);
       }
     },
     components: {
