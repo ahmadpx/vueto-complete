@@ -1,9 +1,6 @@
-<div>
-<h1>vueto-complete</h1>
+# vueto-complete
 
-<p>vue autoComplete component</a></p>
-</div>
-
+vue autoComplete component
 
 <!--
 [![version][version-badge]][package]
