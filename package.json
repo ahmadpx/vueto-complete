@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
+    "lodash.sortby": "^4.7.0",
     "vue": "^2.5.17"
   },
   "keywords": [

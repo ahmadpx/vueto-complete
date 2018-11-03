@@ -116,6 +116,7 @@
 
 <script>
 import debounce from 'lodash.debounce';
+import sortBy from 'lodash.sortby';
 import constants from './constants';
 
 /**
@@ -353,12 +354,14 @@ export default {
         this.$emit('startedFetching');
 
         let results = this.autoCompleteList.length ? this.autoCompleteList : await this.fetchHandler(this.query);
+        results = this.useCategories && this.categoryKey ? sortBy(results, this.categoryKey) : results;
         results = this.formatResultsStructure(results);
         results = this.filterHandler ? this.filterHandler(results) : results;
         results = this.sortHandler ? this.sortHandler(results) : results;
         results = this.maxResultsToDisplay ? results.slice(0, this.maxResultsToDisplay) : results;
         results = this.highlightMatched ? results.map(this.markMatchedWords) : results;
         results = this.filteredResultsByQuery(results);
+        results = results.map((item, index) => ({...item, itemIndex: index}));
         this.results = results;
 
         this.$emit('fetchSuccess', results);
@@ -414,6 +417,15 @@ export default {
         const searchContext = searchKeys.map(key => JSON.stringify(item[key])).join('');
         return query.length ? RegExp(query, 'gi').test(searchContext) : false;
       });
+    },
+  
+    /**
+     * group results by category
+     * @param {Array<object>} results
+     * @returns {Array<object>} results
+     */
+    sortByCategory(results) {
+      return sortBy(results, this.categoryKey);
     },
 
     /**
