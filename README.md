@@ -4,11 +4,12 @@
 <p>vue autoComplete component</a></p>
 </div>
 
-<hr />
 
+<!--
 [![version][version-badge]][package]
 [![downloads][downloads-badge]][npmtrends]
 [![MIT License][license-badge]][LICENSE]
+-->
 
 ## Index
 
@@ -65,20 +66,14 @@ yarn add vueto-complete
   
   const styles = {
     container: {
-      maxWidth: '500px'
+      maxWidth: '500px',
     },
-    input: {},
-    focusedInput: {},
-    inputWrapper: {},
-    focusedInputWrapper: {},
-    inputLabel: {},
-    focusedInputLabel: {},
-    resultsList: {},
-    resultItem: {},
-    highlightedItem: {},
-    matchedWords: {},
-    highlightedMatchedWords: {},
-    categoryLabel: {},
+    input: {
+      border: '1px solid gray',
+    },
+    focusedInput: {
+      background: '#e0e0e0',
+    },
   };
   
   export default {
@@ -155,6 +150,7 @@ yarn add vueto-complete
 | `item`                                        | current item object   | it renders the result item                |        
 | `item-icon`                                   | current item object   | it renders the result item icon           |          
 | `item-caption`                                | current item object   | it renders the result item caption        |        
+| `loading-icon`                                | no scope              | it renders the input loading icon         |        
 | `no-results`                                  | no scope              | it renders the no results message         |        
 
 

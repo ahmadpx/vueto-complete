@@ -161,6 +161,7 @@ import constants from './constants';
  * @slot [name = item-icon, slot-scope = item] to control how to render item icon
  * @slot [name = item-caption, slot-scope = item] to control how to render item caption
  * @slot [name = no-results] to control how to render no results message
+ * @slot [name = loading-icon] to control how to render loading icon
  *
  * =EVENTS=
  * @event input [fired on input change, you can use `v-model` on the component]
