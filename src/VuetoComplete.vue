@@ -683,6 +683,10 @@ export default {
     &--highlighted {
       background: #e0e0e0;
     }
+    
+    &:last-child {
+      border-radius: 0 2px 2px 0;
+    }
   }
 
   &__itemMatched {
